@@ -4,7 +4,58 @@ String.prototype.replaceAll = function (find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
+function get_disp_history() {
+	console.log("Entered get_disp_history");
+	var disp_history_obj = {
+		5050:0,
+		5100:0,
+		5105:0,
+		5107:0,
+		5111:0,
+		5112:0,
+		5117:0,
+		5121:0,
+		5130:0,
+		5140:0,
+		5150:0,
+		5200:0,
+		5300:0,
+		5320:0,
+		5330:0,
+		5400:0,
+		5550:0,
+		5560:0,
+		5700:0,
+		5900:0,
+		9100:0
+	}
+
+	var idisp_iteration;
+	var idisp_content;
+
+	for(int i = 0; i <= 20; ++i) {
+		if(i > 10) {
+			idisp = "${e://Field/IDISP0" + i + "}";
+		} else {
+			idisp = "${e://Field/IDISP" + i + "}";
+		}
+		idisp_content = idisp;
+
+		if(disp_history_obj.hasOwnProperty(parseInt(idisp))) {
+			disp_history_obj[parseInt(idisp)] += 1;
+		}
+	}
+
+	console.log("Leaving get_disp_history");
+	
+	return disp_history_obj;
+}
+
 function get_embedded_data_url(dispo) {
+	var disp_history_json = get_disp_history();
+
+	console.log(disp_history_json);
+
 	var intVStatus = 3;
 	if(dispo < 5000) {
 		intVStatus = 4;
