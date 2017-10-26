@@ -30,16 +30,20 @@ function get_disp_history() {
 		9100:0
 	}
 
-	var idisp_iteration;
-	var idisp_content;
+	var idisp_iteration = "";
+	var idisp_content = "";
 
-	for(int i = 0; i <= 20; ++i) {
+	for(var i = 0; i <= 20; ++i) {
 		if(i > 10) {
-			idisp = "${e://Field/IDISP0" + i + "}";
+			idisp_iteration = "${e://Field/IDISP0" + i.toString() + "}";
 		} else {
-			idisp = "${e://Field/IDISP" + i + "}";
+			idisp_iteration = "${e://Field/IDISP" + i.toString() + "}";
 		}
-		idisp_content = idisp;
+		if(idisp_iteration) {
+			idisp_content = idisp_iteration;
+		} else {
+			break;
+		}
 
 		if(disp_history_obj.hasOwnProperty(parseInt(idisp))) {
 			disp_history_obj[parseInt(idisp)] += 1;
@@ -53,6 +57,9 @@ function get_disp_history() {
 
 function get_embedded_data_url(dispo) {
 	var disp_history_json = get_disp_history();
+	if(disp_history_json.hasOwnProperty(dispo)) {
+		disp_history_json[dispo] += 1;
+	}
 
 	console.log(disp_history_json);
 
