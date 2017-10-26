@@ -4,7 +4,7 @@ String.prototype.replaceAll = function (find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
-function get_disp_history() {
+function get_disp_history(dispo) {
 	console.log("Entered get_disp_history");
 	var disp_history_obj = {
 		5050:0,
@@ -30,14 +30,17 @@ function get_disp_history() {
 		9100:0
 	}
 
+	idisp_field_name = "";
 	var idisp_iteration = "";
 	var idisp_content = "";
 
 	for(var i = 0; i <= 20; ++i) {
 		if(i > 10) {
 			idisp_iteration = "${e://Field/IDISP0" + i.toString() + "}";
+			idisp_field_name = "IDISP0" + i.toString();
 		} else {
 			idisp_iteration = "${e://Field/IDISP" + i.toString() + "}";
+			idisp_field_name = "IDISP" + i.toString();
 		}
 		if(idisp_iteration) {
 			idisp_content = idisp_iteration;
@@ -47,6 +50,7 @@ function get_disp_history() {
 
 		if(disp_history_obj.hasOwnProperty(parseInt(idisp))) {
 			disp_history_obj[parseInt(idisp)] += 1;
+			Qualtrics.SurveyEngine.setEmbeddedData(idisp_field_name, dispo);
 		}
 	}
 
@@ -56,7 +60,7 @@ function get_disp_history() {
 }
 
 function get_embedded_data_url(dispo) {
-	var disp_history_json = get_disp_history();
+	var disp_history_json = get_disp_history(dispo);
 	if(disp_history_json.hasOwnProperty(dispo)) {
 		disp_history_json[dispo] += 1;
 	}
@@ -84,6 +88,7 @@ function get_embedded_data_url(dispo) {
 	url += "IntVStatus=" + intVStatus + "/";
 	url += "Dispo=" + dispo;
 	url = url.replaceAll(' ', '_');
+	alert('halp');
 	return url;
 }
 
