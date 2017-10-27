@@ -1,4 +1,5 @@
 //VERSION 1.0
+//Last updated 10/27/2017
 <script>
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
