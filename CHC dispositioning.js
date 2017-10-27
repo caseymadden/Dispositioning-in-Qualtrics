@@ -1,3 +1,4 @@
+//VERSION 1.0
 <script>
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
