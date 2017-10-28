@@ -1,6 +1,7 @@
-//VERSION 1.0
-//Last updated 10/27/2017
+
 <script>
+//VERSION 1.0
+//Last updated 10/28/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -61,7 +62,13 @@ loadJs('https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js', funct
     {
 
 //Root menu
-$('<div id="myModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>INTERVIEWER: You are now ready to answer questions to assign a disposition code. If you continue past this screen, you will select the outcome of this call attempt.</p><ul style="list-style:none;"><li><button id="supervisorAttention">Supervisor attention*</button></li><li><button id="scheduleAnAppointmentForCallback">Schedule an appointment for callback</button></li><li><button id="scheduledAnInPersonInterview">Scheduled an in-person interview</button></li><li><button id="spokeWithAPerson">Spoke with a person</button></li><li><button id="didNotSpeakWithAPerson">Did not speak with a person</button></li><li><button id="selectedPersonTransferedToANursingHome">Selected person transfered to a nursing home</button></li><li><button id="selectedPersonDead">Selected person dead</button></li></ul></div></div>').appendTo("body");
+$('<div id="myModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>INTERVIEWER: You are now ready to answer questions to assign a disposition code. If you continue past this screen, you will select the outcome of this call attempt.</p><ul style="list-style:none;"><li><button id="complete">***COMPLETE***</button></li><li><button id="supervisorAttention">Supervisor attention*</button></li><li><button id="scheduleAnAppointmentForCallback">Schedule an appointment for callback</button></li><li><button id="scheduledAnInPersonInterview">Scheduled an in-person interview</button></li><li><button id="spokeWithAPerson">Spoke with a person</button></li><li><button id="didNotSpeakWithAPerson">Did not speak with a person</button></li><li><button id="selectedPersonTransferedToANursingHome">Selected person transfered to a nursing home</button></li><li><button id="selectedPersonDead">Selected person dead</button></li></ul></div></div>').appendTo("body");
+
+//Complete modal
+$('<div id="completeModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Is the complete with the proxy, or the SP?</p><ul style="list-style:none;"><li><li><button id="completeWithSP">Complete with the SP</button></li><li><button id="completeWithAProxy">Completed with a proxy</button></li><li><button id="completeModalBackButton">Back</button></li></ul></div></div>').appendTo("body");
+$('<div id="dispo1100Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 1100</p><p>COMPLETE WITH SP</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo1100next">Next</button></li><li><button id="dispo1100back">Back</button></li></ul></div></div>').appendTo("body");
+$('<div id="dispo1107Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 1107</p><p>COMPLETE WITH A PROXY</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo1107next">Next</button></li><li><button id="dispo1107back">Back</button></li></ul></div></div>').appendTo("body");
+
 
 //Supervisor attention
 $('<div id="supervisorAttentionModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5700</p><p>SUPERVISOR ATTENTION</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="supervisorAttentionNext">Next</button></li><li><button id="dispo5700back">Back</button></li></ul></div></div>').appendTo("body");
@@ -145,6 +152,52 @@ $('.close').click(function(){
 		this.style.display = "none";
 	});
 });
+
+//Complete
+var completeButton = document.getElementById('complete');
+completeButton.onclick = function() {
+	modal.style.display = "none";
+	completeModal.style.display = "block";
+}
+var completeWithSPButton = document.getElementById('completeWithSP');
+completeWithSPButton.onclick = function() {
+	completeModal.style.display = "none";
+	dispo1100Modal.style.display = "block";
+}
+
+var dispo1100nextButton = document.getElementById('dispo1100next');
+dispo1100nextButton.onclick = function() {
+	window.open(get_embedded_data_url(1100));
+}
+
+var dispo1100backButton = document.getElementById('dispo1100back');
+dispo1100backButton.onclick =function() {
+	dispo1100Modal.style.display = "none";
+	completeModal.style.display = "block";
+}
+
+var completeWithAProxyButton = document.getElementById('completeWithAProxy');
+completeWithAProxyButton.onclick = function() {
+	completeModal.style.display = "none";
+	dispo1107Modal.style.display = "block";
+}
+
+var dispo1107nextButton = document.getElementById('dispo1107next');
+dispo1107nextButton.onclick = function() {
+	window.open(get_embedded_data_url(1107));
+}
+
+var dispo1107backButton = document.getElementById('dispo1107back');
+dispo1107backButton.onclick = function() {
+	dispo1107Modal.style.display = "none";
+	completeModal.style.display = "block";
+}
+
+var completeModalBackButton = document.getElementById('completeModalBackButton');
+completeModalBackButton.onclick = function() {
+	completeModal.style.display = "none";
+	modal.style.display = "block";
+}
 
 //Supervisor attention
 {
