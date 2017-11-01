@@ -6,93 +6,38 @@ String.prototype.replaceAll = function (find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
-// function set_embedded_data_disp(dispo) {
-// 	idisp_iteration = "";
-// 	idisp_field_name = "";
-
-// 	for(var i = 1; i <= 20; ++i) {
-// 		if(i < 10) {
-// 			idisp_field_name = "IDISP0" + i;
-// 		} else {
-// 			idisp_field_name = "IDISP" + i;
-// 		}
-
-// 		if(!idisp_iteration) {
-// 			console.log("Setting embedded data");
-// 			console.log("idisp_field_name: " + idisp_field_name);
-// 			Qualtrics.SurveyEngine.setEmbeddedData(idisp_field_name, dispo);
-// 			console.log("EDF: ${e://Field/IDISP01}");
-// 			console.log("And now I'm breaking");
-// 			break;
-// 		}
-// 	}
-// }
-
-function get_disp_history(dispo) {
-	var disp_history_obj = {
-		5050:0,
-		5100:0,
-		5105:0,
-		5107:0,
-		5111:0,
-		5112:0,
-		5117:0,
-		5121:0,
-		5130:0,
-		5140:0,
-		5150:0,
-		5200:0,
-		5300:0,
-		5320:0,
-		5330:0,
-		5400:0,
-		5550:0,
-		5560:0,
-		5700:0,
-		5900:0,
-		9100:0
+function get_IDISP_array(dispo) {
+	// Create an array for IDISPS to pipe into URL. Ensure all cells have something in them, even if it's just an empty string
+	var IDISP_array = [];
+	for(var j= 0; j < 21; ++j) {
+		IDISP_array[j] = "";
 	}
 
-	idisp_field_name = "";
-	var idisp_iteration = "";
-	var idisp_content = "";
+	var i = 1;
 
-	for(var i = 1; i <= 20; ++i) {
+	while(i < 21) {
+		// Fill IDISP_array with embedded data that already exists, thereby getting the history
 		if(i < 10) {
-			idisp_iteration = "${e://Field/IDISP0" + i + "}";
-			idisp_field_name = "IDISP0" + i;
-		} else {
-			idisp_iteration = "${e://Field/IDISP" + i + "}";
-			idisp_field_name = "IDISP" + i;
+			IDISP_array[i] = "${e://Field/IDISP0" + i + "}";
+		}
+		else {
+			IDISP_array[i] = "${e://Field/IDISP" + i + "}";
 		}
 
-		// console.log("idisp_iteration: " + idisp_iteration);
-		// console.log("idisp_field_name: " + idisp_field_name);
-
-		if(idisp_iteration) {
-			idisp_content = idisp_iteration;
-		} else if(i > 1) {
-			console.log("breaking");
+		// If the embedded data field is empty, we set the current array cell to the current dispo and break out of the loop
+		if(!IDISP_array[i]) {
+			IDISP_array[i] = dispo;
 			break;
 		}
-
-		if(disp_history_obj.hasOwnProperty(parseInt(idisp_content))) {
-			disp_history_obj[parseInt(idisp_content)] += 1;
-		}
 	}
-	
-	return disp_history_obj;
+
+	return IDISP_array;
 }
 
 function get_embedded_data_url(dispo) {
-	// set_embedded_data_disp(dispo);
+	var IDISP_array = get_IDISP_array(dispo);
 
-	var disp_history_json = get_disp_history(dispo);
-	if(disp_history_json.hasOwnProperty(dispo)) {
-		disp_history_json[dispo] += 1;
-	}
-
-	console.log(disp_history_json);
+	console.log("IDISP_array: " + IDISP_array);
 
 	var intVStatus = 3;
 	if(dispo < 5000) {
@@ -111,15 +56,74 @@ function get_embedded_data_url(dispo) {
 	url += "NSOCphone=${e://Field/NSOCphone}/";
 	url += "NSOCother=${e://Field/NSOCother}/";
 	url += "NSOCtime=${e://Field/NSOCtime}/";
-	url += "Wave=${e://Field/Wave}/";
-	url += "IDISP01=${e://Field/IDISP01}/";
-	
+	url += "IDISP01=" + IDISP_array[1] + "/";
+	url += "IDISP02=" + IDISP_array[2] + "/";
+	url += "IDISP03=" + IDISP_array[3] + "/";
+	url += "IDISP04=" + IDISP_array[4] + "/";
+	url += "IDISP05=" + IDISP_array[5] + "/";
+	url += "IDISP06=" + IDISP_array[6] + "/";
+	url += "IDISP07=" + IDISP_array[7] + "/";
+	url += "IDISP08=" + IDISP_array[8] + "/";
+	url += "IDISP09=" + IDISP_array[9] + "/";
+	url += "IDISP10=" + IDISP_array[10] + "/";
+	url += "Wave=${e://Field/Wave}/";	
 	url += "IntVStatus=" + intVStatus + "/";
 	url += "Dispo=" + dispo;
 	url = url.replaceAll(' ', '_');
+
+	console.log(url);
+
 	alert('Alert box to pause');
 	return url;
 }
+
+
+// function get_disp_history(dispo) {
+
+// 	// Create JSON
+// 	var disp_history_obj = {
+// 		5050:0,
+// 		5100:0,
+// 		5105:0,
+// 		5107:0,
+// 		5111:0,
+// 		5112:0,
+// 		5117:0,
+// 		5121:0,
+// 		5130:0,
+// 		5140:0,
+// 		5150:0,
+// 		5200:0,
+// 		5300:0,
+// 		5320:0,
+// 		5330:0,
+// 		5400:0,
+// 		5550:0,
+// 		5560:0,
+// 		5700:0,
+// 		5900:0,
+// 		9100:0
+// 	}
+// 		// Check if embedded data exists. If it does exist, increment the corresponding JSON property by 1 and continue looping
+// 		// If it does not exist, increment the property corresponding to the current dispo and break
+// 		if(idisp_embedded_data) {
+// 			idisp_content = idisp_embedded_data;
+// 			if(disp_history_obj.hasOwnProperty(parseInt(idisp_content))) {
+// 				disp_history_obj[parseInt(idisp_content)] += 1;
+// 		} else {
+// 			if(disp_history_obj.hasOwnProperty(parseInt(idisp_content)))
+// 				disp_history_obj[dispo] += 1;
+// 			console.log("breaking");
+// 			break;
+// 		}
+
+// 		if(disp_history_obj.hasOwnProperty(parseInt(idisp_content))) {
+// 			disp_history_obj[parseInt(idisp_content)] += 1;
+// 		}
+// 	}
+	
+// 	return disp_history_obj;
+// }
 
 function loadJs(src, callback) {
     var s = document.createElement('script');
