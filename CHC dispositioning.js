@@ -1,6 +1,6 @@
 <script>
 // VERSION 1.0 - DISP HISTORY BRANCH
-// Last edited 10/31/2017
+// Last edited 11/1/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -112,6 +112,8 @@ function get_embedded_data_url(dispo) {
 	url += "NSOCother=${e://Field/NSOCother}/";
 	url += "NSOCtime=${e://Field/NSOCtime}/";
 	url += "Wave=${e://Field/Wave}/";
+	url += "IDISP01=${e://Field/IDISP01}/";
+	
 	url += "IntVStatus=" + intVStatus + "/";
 	url += "Dispo=" + dispo;
 	url = url.replaceAll(' ', '_');
