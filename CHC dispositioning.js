@@ -1,32 +1,32 @@
 <script>
 // VERSION 1.0 - DISP HISTORY BRANCH
-// Last edited 10/30/2017
+// Last edited 10/31/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
-function add_disp_to_embedded_data(dispo) {
-	idisp_iteration = "";
-	idisp_field_name = "";
+// function set_embedded_data_disp(dispo) {
+// 	idisp_iteration = "";
+// 	idisp_field_name = "";
 
-	for(var i = 1; i <= 20; ++i) {
-		if(i < 10) {
-			idisp_iteration = "${e://Field/IDISP0" + i + "}";
-			idisp_field_name = "IDISP0" + i;
-		} else {
-			idisp_iteration = "${e://Field/IDISP" + i + "}";
-			idisp_field_name = "IDISP" + i;
-		}
+// 	for(var i = 1; i <= 20; ++i) {
+// 		if(i < 10) {
+// 			idisp_field_name = "IDISP0" + i;
+// 		} else {
+// 			idisp_field_name = "IDISP" + i;
+// 		}
 
-		if(!idisp_iteration) {
-			console.log("Setting embedded data");
-			Qualtrics.SurveyEngine.setEmbeddedData(idisp_field_name, dispo);
-			console.log("And now I'm breaking");
-			break;
-		}
-	}
-}
+// 		if(!idisp_iteration) {
+// 			console.log("Setting embedded data");
+// 			console.log("idisp_field_name: " + idisp_field_name);
+// 			Qualtrics.SurveyEngine.setEmbeddedData(idisp_field_name, dispo);
+// 			console.log("EDF: ${e://Field/IDISP01}");
+// 			console.log("And now I'm breaking");
+// 			break;
+// 		}
+// 	}
+// }
 
 function get_disp_history(dispo) {
 	var disp_history_obj = {
@@ -66,8 +66,8 @@ function get_disp_history(dispo) {
 			idisp_field_name = "IDISP" + i;
 		}
 
-		console.log("idisp_iteration: " + idisp_iteration);
-		console.log("idisp_field_name: " + idisp_field_name);
+		// console.log("idisp_iteration: " + idisp_iteration);
+		// console.log("idisp_field_name: " + idisp_field_name);
 
 		if(idisp_iteration) {
 			idisp_content = idisp_iteration;
@@ -85,7 +85,8 @@ function get_disp_history(dispo) {
 }
 
 function get_embedded_data_url(dispo) {
-	add_disp_to_embedded_data(dispo);
+	// set_embedded_data_disp(dispo);
+
 	var disp_history_json = get_disp_history(dispo);
 	if(disp_history_json.hasOwnProperty(dispo)) {
 		disp_history_json[dispo] += 1;
@@ -114,7 +115,7 @@ function get_embedded_data_url(dispo) {
 	url += "IntVStatus=" + intVStatus + "/";
 	url += "Dispo=" + dispo;
 	url = url.replaceAll(' ', '_');
-	alert('halp');
+	alert('Alert box to pause');
 	return url;
 }
 
