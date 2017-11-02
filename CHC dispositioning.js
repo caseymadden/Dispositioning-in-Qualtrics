@@ -1,6 +1,6 @@
 <script>
 // VERSION 1.0 - DISP HISTORY BRANCH
-// Last edited 11/1/2017
+// Last edited 11/2/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -13,19 +13,35 @@ function get_IDISP_array(dispo) {
 		IDISP_array[j] = "";
 	}
 
+	currentUrl = window.location.href;
 	var i = 1;
 
 	while(i < 21) {
-		// Fill IDISP_array with embedded data that already exists, thereby getting the history
+		// Create a string for the current IDISP we want to examine in the URL
 		if(i < 10) {
-			IDISP_array[i] = "${e://Field/IDISP0" + i + "}";
+			idisp_iteration = "IDISP0" + i;
 		}
 		else {
-			IDISP_array[i] = "${e://Field/IDISP" + i + "}";
+			idisp_iteration = "IDISP" + i;
 		}
 
-		// If the embedded data field is empty, we set the current array cell to the current dispo and break out of the loop
-		if(!IDISP_array[i]) {
+		console.log("idisp_iteration: " + idisp_iteration);
+
+		// Find the disposition code associated with the IDISP string we made earlier by locating the substring IDISP(X)
+		// When IDISP(x) is located, we grab whatever is 4 characters after it, which is either garbled text or the dispo code
+		dispo_code = currentUrl.substring(currentUrl.indexOf(idisp_iteration));
+		dispo_code = dispo_code.substring(8,12);
+
+		// If the dispo code is a number, add the code to the IDISP_array, thereby creating an array filled with disp history
+		if(!isNaN(dispo_code)) {
+			console.log("dispo_code: " + dispo_code);
+			IDISP_array[i] = dispo_code;
+			i += 1;
+		}
+
+		// If the dispo_code is not a number, we add the dispo code the interviewer selected to the end of the array
+		// The array is now a complete history. We break out of the loop and return the array
+		if(isNaN(dispo_code)) {
 			IDISP_array[i] = dispo;
 			break;
 		}
@@ -70,9 +86,6 @@ function get_embedded_data_url(dispo) {
 	url += "IntVStatus=" + intVStatus + "/";
 	url += "Dispo=" + dispo;
 	url = url.replaceAll(' ', '_');
-
-	console.log(url);
-
 	alert('Alert box to pause');
 	return url;
 }
