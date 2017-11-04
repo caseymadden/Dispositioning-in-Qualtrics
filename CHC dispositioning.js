@@ -1,6 +1,6 @@
 <script>
 // VERSION 1.0 - DISP HISTORY BRANCH
-// Last edited 11/2/2017
+// Last edited 11/4/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -25,8 +25,6 @@ function get_IDISP_array(dispo) {
 			idisp_iteration = "IDISP" + i;
 		}
 
-		console.log("idisp_iteration: " + idisp_iteration);
-
 		// Find the disposition code associated with the IDISP string we made earlier by locating the substring IDISP(X)
 		// When IDISP(x) is located, we grab whatever is 4 characters after it, which is either garbled text or the dispo code
 		dispo_code = currentUrl.substring(currentUrl.indexOf(idisp_iteration));
@@ -34,7 +32,6 @@ function get_IDISP_array(dispo) {
 
 		// If the dispo code is a number, add the code to the IDISP_array, thereby creating an array filled with disp history
 		if(!isNaN(dispo_code)) {
-			console.log("dispo_code: " + dispo_code);
 			IDISP_array[i] = dispo_code;
 			i += 1;
 		}
@@ -50,8 +47,54 @@ function get_IDISP_array(dispo) {
 	return IDISP_array;
 }
 
+function create_disp_history_JSON(IDISP_array) {
+
+	// Create JSON
+	var disp_history_obj = {
+		5050:0,
+		5100:0,
+		5105:0,
+		5107:0,
+		5111:0,
+		5112:0,
+		5117:0,
+		5121:0,
+		5130:0,
+		5140:0,
+		5150:0,
+		5200:0,
+		5300:0,
+		5320:0,
+		5330:0,
+		5400:0,
+		5550:0,
+		5560:0,
+		5700:0,
+		5900:0,
+		9100:0
+	}
+
+	// Iterate through IDISP_array and for each cell in IDISP_array increment the corresponding JSON property by 1
+	for(var i = 0; i < 21; ++i) {
+		console.log("disp_history_obj.hasOwnProperty: " + disp_history_obj.hasOwnProperty(IDISP_array[i]))
+		if(disp_history_obj.hasOwnProperty(IDISP_array[i])) {
+			array_content = IDISP_array[i];
+			array_content = parseInt(array_content);
+			console.log("array_content: " + array_content);
+			disp_history_obj[array_content] += 1;
+		}
+	}
+
+	// Pass tree to method that runs logic checks
+	
+	console.log(disp_history_obj);
+
+	return;
+}
+
 function get_embedded_data_url(dispo) {
 	var IDISP_array = get_IDISP_array(dispo);
+	var end_dispo = create_disp_history_JSON(IDISP_array);
 
 	console.log("IDISP_array: " + IDISP_array);
 
@@ -81,7 +124,16 @@ function get_embedded_data_url(dispo) {
 	url += "IDISP07=" + IDISP_array[7] + "/";
 	url += "IDISP08=" + IDISP_array[8] + "/";
 	url += "IDISP09=" + IDISP_array[9] + "/";
-	url += "IDISP10=" + IDISP_array[10] + "/";
+	url += "IDISP11=" + IDISP_array[10] + "/";
+	url += "IDISP12=" + IDISP_array[10] + "/";
+	url += "IDISP13=" + IDISP_array[10] + "/";
+	url += "IDISP14=" + IDISP_array[10] + "/";
+	url += "IDISP15=" + IDISP_array[10] + "/";
+	url += "IDISP16=" + IDISP_array[10] + "/";
+	url += "IDISP17=" + IDISP_array[10] + "/";
+	url += "IDISP18=" + IDISP_array[10] + "/";
+	url += "IDISP19=" + IDISP_array[10] + "/";
+	url += "IDISP20=" + IDISP_array[10] + "/";
 	url += "Wave=${e://Field/Wave}/";	
 	url += "IntVStatus=" + intVStatus + "/";
 	url += "Dispo=" + dispo;
@@ -89,54 +141,6 @@ function get_embedded_data_url(dispo) {
 	alert('Alert box to pause');
 	return url;
 }
-
-
-// function get_disp_history(dispo) {
-
-// 	// Create JSON
-// 	var disp_history_obj = {
-// 		5050:0,
-// 		5100:0,
-// 		5105:0,
-// 		5107:0,
-// 		5111:0,
-// 		5112:0,
-// 		5117:0,
-// 		5121:0,
-// 		5130:0,
-// 		5140:0,
-// 		5150:0,
-// 		5200:0,
-// 		5300:0,
-// 		5320:0,
-// 		5330:0,
-// 		5400:0,
-// 		5550:0,
-// 		5560:0,
-// 		5700:0,
-// 		5900:0,
-// 		9100:0
-// 	}
-// 		// Check if embedded data exists. If it does exist, increment the corresponding JSON property by 1 and continue looping
-// 		// If it does not exist, increment the property corresponding to the current dispo and break
-// 		if(idisp_embedded_data) {
-// 			idisp_content = idisp_embedded_data;
-// 			if(disp_history_obj.hasOwnProperty(parseInt(idisp_content))) {
-// 				disp_history_obj[parseInt(idisp_content)] += 1;
-// 		} else {
-// 			if(disp_history_obj.hasOwnProperty(parseInt(idisp_content)))
-// 				disp_history_obj[dispo] += 1;
-// 			console.log("breaking");
-// 			break;
-// 		}
-
-// 		if(disp_history_obj.hasOwnProperty(parseInt(idisp_content))) {
-// 			disp_history_obj[parseInt(idisp_content)] += 1;
-// 		}
-// 	}
-	
-// 	return disp_history_obj;
-// }
 
 function loadJs(src, callback) {
     var s = document.createElement('script');
