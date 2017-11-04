@@ -86,15 +86,28 @@ function create_disp_history_JSON(IDISP_array) {
 	}
 
 	// Pass tree to method that runs logic checks
-	
+	var new_dispo;
 	console.log(disp_history_obj);
+	if(disp_history_obj[5112] == 2) {
+		new_dispo = 2112;
+	}
 
-	return;
+	return new_dispo;
 }
+
+// function run_logic_checks(disp_history_obj) {
+// 	console.log("disp_history_obj: " + disp_history_obj);
+// 	var new_dispo;
+// 	if(disp_history_obj[5112] == 2) {
+// 		new_dispo = 2112;
+// 	}
+
+// 	return new_dispo;
+// }
 
 function get_embedded_data_url(dispo) {
 	var IDISP_array = get_IDISP_array(dispo);
-	var end_dispo = create_disp_history_JSON(IDISP_array);
+	var new_dispo = create_disp_history_JSON(IDISP_array);
 
 	console.log("IDISP_array: " + IDISP_array);
 
@@ -136,7 +149,11 @@ function get_embedded_data_url(dispo) {
 	url += "IDISP20=" + IDISP_array[10] + "/";
 	url += "Wave=${e://Field/Wave}/";	
 	url += "IntVStatus=" + intVStatus + "/";
-	url += "Dispo=" + dispo;
+	if(new_dispo) {
+		url += "Dispo=" + new_dispo;
+	} else {
+		url += "Dispo=" + dispo;
+	}
 	url = url.replaceAll(' ', '_');
 	alert('Alert box to pause');
 	return url;
