@@ -86,24 +86,36 @@ function create_disp_history_JSON(IDISP_array) {
 	}
 
 	// Pass tree to method that runs logic checks
-	var new_dispo;
-	console.log(disp_history_obj);
-	if(disp_history_obj[5112] == 2) {
-		new_dispo = 2112;
-	}
+	var new_dispo = run_logic_checks(disp_history_obj, IDISP_array.length);
 
 	return new_dispo;
 }
 
-// function run_logic_checks(disp_history_obj) {
-// 	console.log("disp_history_obj: " + disp_history_obj);
-// 	var new_dispo;
-// 	if(disp_history_obj[5112] == 2) {
-// 		new_dispo = 2112;
-// 	}
+function run_logic_checks(dho, total_attempts) {
+	console.log("disp_history_obj: " + dho);
+	var new_dispo;
 
-// 	return new_dispo;
-// }
+	function dispo_3130(dho) {
+	// 3130 - 8 attempts with plurality of attempts assigned 5130
+		for(var key in dho) {
+			if(dho[key] >= dho[5130]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	
+
+	if(total_attempts == 8) {
+		if(dispo_3130(dho)) {
+			new_dispo = 3130;
+		}
+	}
+	
+
+	return new_dispo;
+}
 
 function get_embedded_data_url(dispo) {
 	var IDISP_array = get_IDISP_array(dispo);
