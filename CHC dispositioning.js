@@ -100,7 +100,7 @@ function create_disp_history_JSON(IDISP_array) {
 
 function run_logic_checks(dho, total_attempts) {
 	var max_attempts = 6;
-	if(dho[5100] > 0 || dho[5105] > 0 || dho[5107] > 0 || dho[5121] > 0 || dho[5320] > 0 || dho[5330] > 0 || dho[5560] > 0) {
+	if(dho[5100] > 0 || dho[5105] > 0 || dho[5107] > 0 || dho[5121] > 0 || dho[5320] > 0 || dho[5330] > 0 || dho[5560] > 0 || dho[5130] > 0 || dho[5140] > 0 || dho[5150] > 0) {
 		max_attempts = 8;
 	}
 
@@ -154,7 +154,7 @@ function run_logic_checks(dho, total_attempts) {
 		return true;
 	}
 
-	function dispo_3140(dho) {
+	function dispo_3150(dho) {
 	// 3150 - 8 attempts with plurality of attempts assigned 5140
 		for(var key in dho) {
 			if(dho[key] >= dho[5150]) {
