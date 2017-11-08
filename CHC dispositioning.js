@@ -1,6 +1,6 @@
 <script>
 // VERSION 1.0 - DISP HISTORY BRANCH
-// Last edited 11/7/2017
+// Last edited 11/8/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -95,37 +95,75 @@ function run_logic_checks(dho, total_attempts) {
 	console.log("disp_history_obj: " + dho);
 	var new_dispo;
 
-	function dispo_3130(dho) {
-	// 3130 - 8 attempts with plurality of attempts assigned 5130
-		for(var key in dho) {
-			if(dho[key] >= dho[5130]) {
-				return false;
+	{
+		function dispo_4200(dho) {
+			// At least one 5200 dispo
+			if(dho[5200] > 0) {
+				return true;
 			}
+			return false;
 		}
-		return true;
-	}
-
-	function dispo_3140(dho) {
-	// 3140 - 8 attempts with plurality of attempts assigned 5140
-		for(var key in dho) {
-			if(dho[key] >= dho[5140]) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-
-	// Only run these checks if there are 8 total attempts
 	
-	if(total_attempts == 8) {
-		if(dispo_3130(dho)) {
-			new_dispo = 3130;
+		function dispo_4300(dho) {
+			// At least one 5300 dispo
+			if(dho[5300] > 0) {
+				return true;
+			}
+			return false;
 		}
-		if(dispo_3140(dho)) {
-			new_dispo = 3140;
+	
+		function dispo_4400(dho) {
+			// At least one 5400 dispo
+			if(dho[5400] > 0) {
+				return true;
+			}
+			return false;
 		}
 	}
+
+	// function dispo_3130(dho) {
+	// // 3130 - 8 attempts with plurality of attempts assigned 5130
+	// 	for(var key in dho) {
+	// 		if(dho[key] >= dho[5130]) {
+	// 			return false;
+	// 		}
+	// 	}
+	// 	return true;
+	// }
+
+	// function dispo_3140(dho) {
+	// // 3140 - 8 attempts with plurality of attempts assigned 5140
+	// 	for(var key in dho) {
+	// 		if(dho[key] >= dho[5140]) {
+	// 			return false;
+	// 		}
+	// 	}
+	// 	return true;
+	// }
+
+	// Run checks on 6 attempts
+	if(total_attempts == 6) {
+		if(dispo_4200(dho)) {
+			return new_dispo = 4200;
+		}
+		if(dispo_4300(dho)) {
+			return new_dispo = 4300;
+		}
+		if(dispo_4400(dho)) {
+			return new_dispo = 4400;
+		}
+	}
+
+	// // Only run these checks if there are 8 total attempts
+	
+	// if(total_attempts == 8) {
+	// 	if(dispo_3130(dho)) {
+	// 		new_dispo = 3130;
+	// 	}
+	// 	if(dispo_3140(dho)) {
+	// 		new_dispo = 3140;
+	// 	}
+	// }
 	return new_dispo;
 }
 
