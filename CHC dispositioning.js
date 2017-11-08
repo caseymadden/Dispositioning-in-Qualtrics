@@ -1,6 +1,6 @@
 <script>
 // VERSION 1.0 - DISP HISTORY BRANCH
-// Last edited 11/4/2017
+// Last edited 11/7/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -105,15 +105,27 @@ function run_logic_checks(dho, total_attempts) {
 		return true;
 	}
 
-	
+	function dispo_3140(dho) {
+	// 3140 - 8 attempts with plurality of attempts assigned 5140
+		for(var key in dho) {
+			if(dho[key] >= dho[5140]) {
+				return false;
+			}
+		}
+		return true;
+	}
 
+
+	// Only run these checks if there are 8 total attempts
+	
 	if(total_attempts == 8) {
 		if(dispo_3130(dho)) {
 			new_dispo = 3130;
 		}
+		if(dispo_3140(dho)) {
+			new_dispo = 3140;
+		}
 	}
-	
-
 	return new_dispo;
 }
 
@@ -149,16 +161,17 @@ function get_embedded_data_url(dispo) {
 	url += "IDISP07=" + IDISP_array[7] + "/";
 	url += "IDISP08=" + IDISP_array[8] + "/";
 	url += "IDISP09=" + IDISP_array[9] + "/";
-	url += "IDISP11=" + IDISP_array[10] + "/";
-	url += "IDISP12=" + IDISP_array[10] + "/";
-	url += "IDISP13=" + IDISP_array[10] + "/";
-	url += "IDISP14=" + IDISP_array[10] + "/";
-	url += "IDISP15=" + IDISP_array[10] + "/";
-	url += "IDISP16=" + IDISP_array[10] + "/";
-	url += "IDISP17=" + IDISP_array[10] + "/";
-	url += "IDISP18=" + IDISP_array[10] + "/";
-	url += "IDISP19=" + IDISP_array[10] + "/";
-	url += "IDISP20=" + IDISP_array[10] + "/";
+	url += "IDISP10=" + IDISP_array[10] + "/";
+	url += "IDISP11=" + IDISP_array[11] + "/";
+	url += "IDISP12=" + IDISP_array[12] + "/";
+	url += "IDISP13=" + IDISP_array[13] + "/";
+	url += "IDISP14=" + IDISP_array[14] + "/";
+	url += "IDISP15=" + IDISP_array[15] + "/";
+	url += "IDISP16=" + IDISP_array[16] + "/";
+	url += "IDISP17=" + IDISP_array[17] + "/";
+	url += "IDISP18=" + IDISP_array[18] + "/";
+	url += "IDISP19=" + IDISP_array[19] + "/";
+	url += "IDISP20=" + IDISP_array[20] + "/";
 	url += "Wave=${e://Field/Wave}/";	
 	url += "IntVStatus=" + intVStatus + "/";
 	if(new_dispo) {
