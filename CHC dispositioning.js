@@ -76,23 +76,36 @@ function create_disp_history_JSON(IDISP_array) {
 
 	// Iterate through IDISP_array and for each cell in IDISP_array increment the corresponding JSON property by 1
 	for(var i = 0; i < 21; ++i) {
-		console.log("disp_history_obj.hasOwnProperty: " + disp_history_obj.hasOwnProperty(IDISP_array[i]))
+		//console.log("disp_history_obj.hasOwnProperty: " + disp_history_obj.hasOwnProperty(IDISP_array[i]))
 		if(disp_history_obj.hasOwnProperty(IDISP_array[i])) {
 			array_content = IDISP_array[i];
 			array_content = parseInt(array_content);
-			console.log("array_content: " + array_content);
+			//console.log("array_content: " + array_content);
 			disp_history_obj[array_content] += 1;
 		}
 	}
 
+	// Get total number of attempts
+
+	var total_attempts = 0;
+	for(var key in disp_history_obj) {
+		total_attempts += disp_history_obj[key];
+	}
+
 	// Pass tree to method that runs logic checks
-	var new_dispo = run_logic_checks(disp_history_obj, IDISP_array.length);
+	var new_dispo = run_logic_checks(disp_history_obj, total_attempts);
 
 	return new_dispo;
 }
 
 function run_logic_checks(dho, total_attempts) {
+	var max_attempts = 6;
+	if(dho[5100] > 0 || dho[5105] > 0 || dho[5107] > 0 || dho[5121] > 0 || dho[5320] > 0 || dho[5330] > 0 || dho[5560] > 0) {
+		max_attempts = 8;
+	}
+
 	console.log("disp_history_obj: " + dho);
+	console.log("total_attempts: " + total_attempts);
 	var new_dispo;
 
 	{
@@ -121,49 +134,62 @@ function run_logic_checks(dho, total_attempts) {
 		}
 	}
 
-	// function dispo_3130(dho) {
-	// // 3130 - 8 attempts with plurality of attempts assigned 5130
-	// 	for(var key in dho) {
-	// 		if(dho[key] >= dho[5130]) {
-	// 			return false;
-	// 		}
-	// 	}
-	// 	return true;
-	// }
-
-	// function dispo_3140(dho) {
-	// // 3140 - 8 attempts with plurality of attempts assigned 5140
-	// 	for(var key in dho) {
-	// 		if(dho[key] >= dho[5140]) {
-	// 			return false;
-	// 		}
-	// 	}
-	// 	return true;
-	// }
-
-	// Run checks on 6 attempts
-	if(total_attempts == 6) {
-		if(dispo_4200(dho)) {
-			return new_dispo = 4200;
+	function dispo_3130(dho) {
+	// 3130 - 8 attempts with plurality of attempts assigned 5130
+		for(var key in dho) {
+			if(dho[key] >= dho[5130]) {
+				return false;
+			}
 		}
-		if(dispo_4300(dho)) {
-			return new_dispo = 4300;
+		return true;
+	}
+
+	function dispo_3140(dho) {
+	// 3140 - 8 attempts with plurality of attempts assigned 5140
+		for(var key in dho) {
+			if(dho[key] >= dho[5140]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	function dispo_3140(dho) {
+	// 3150 - 8 attempts with plurality of attempts assigned 5140
+		for(var key in dho) {
+			if(dho[key] >= dho[5150]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	// Run checks on 6 attempts IF max_attempts = 6
+	if(max_attempts == 6 && total_attempts == 6) {
+		if(dispo_4200(dho)) {
+			return 4200;
 		}
 		if(dispo_4400(dho)) {
-			return new_dispo = 4400;
+			return 4400;
+		}
+		if(dispo_4300(dho)) {
+			return 4300;
 		}
 	}
 
-	// // Only run these checks if there are 8 total attempts
+	// Run these checks if max_attempts = 8
 	
-	// if(total_attempts == 8) {
-	// 	if(dispo_3130(dho)) {
-	// 		new_dispo = 3130;
-	// 	}
-	// 	if(dispo_3140(dho)) {
-	// 		new_dispo = 3140;
-	// 	}
-	// }
+	if(max_attempts == 8 && total_attempts == 8) {
+		if(dispo_3130(dho)) {
+			return 3130;
+		}
+		if(dispo_3140(dho)) {
+			return 3140;
+		}
+		if(dispo_3150(dho)) {
+			return 3150;
+		}
+	}
 	return new_dispo;
 }
 
