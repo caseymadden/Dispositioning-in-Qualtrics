@@ -106,6 +106,7 @@ function run_logic_checks(dho, total_attempts) {
 
 	console.log("disp_history_obj: " + dho);
 	console.log("total_attempts: " + total_attempts);
+	console.log("max_attempts: " + max_attempts)
 	var new_dispo;
 
 	{
@@ -136,31 +137,40 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_3130(dho) {
 	// 3130 - 8 attempts with plurality of attempts assigned 5130
+		console.log("function dispo_3130 entered");
 		for(var key in dho) {
-			if(dho[key] >= dho[5130]) {
+			console.log(dho[key] + " vs. " + dho[5130]);
+			if(key != 5130 && dho[key] >= dho[5130]) {
 				return false;
 			}
 		}
+		console.log("returning true");
 		return true;
 	}
 
 	function dispo_3140(dho) {
 	// 3140 - 8 attempts with plurality of attempts assigned 5140
+		console.log("function dispo_3140 entered");
 		for(var key in dho) {
-			if(dho[key] >= dho[5140]) {
+		console.log(dho[key] + " vs. " + dho[5140]);
+			if(key != 5140 && dho[key] >= dho[5140]) {
 				return false;
 			}
 		}
+		console.log("return true");
 		return true;
 	}
 
 	function dispo_3150(dho) {
 	// 3150 - 8 attempts with plurality of attempts assigned 5140
+		console.log("function dispo_3150");
 		for(var key in dho) {
-			if(dho[key] >= dho[5150]) {
+		console.log(dho[key] + " vs. " + dho[5150]);
+			if(key != 5150 && dho[key] >= dho[5150]) {
 				return false;
 			}
 		}
+		console.log("returning true");
 		return true;
 	}
 
@@ -180,13 +190,17 @@ function run_logic_checks(dho, total_attempts) {
 	// Run these checks if max_attempts = 8
 	
 	if(max_attempts == 8 && total_attempts == 8) {
+		console.log("max attempts and total attempts both are 8")
 		if(dispo_3130(dho)) {
+			console.log("3130 true");
 			return 3130;
 		}
 		if(dispo_3140(dho)) {
+			console.log("3140 true");
 			return 3140;
 		}
 		if(dispo_3150(dho)) {
+			console.log("3150 true");
 			return 3150;
 		}
 	}
