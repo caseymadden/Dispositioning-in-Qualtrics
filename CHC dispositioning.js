@@ -1,6 +1,6 @@
 <script>
 // VERSION 1.0 - DISP HISTORY BRANCH
-// Last edited 11/8/2017
+// Last edited 11/810/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -191,17 +191,52 @@ function run_logic_checks(dho, total_attempts) {
 	
 	if(max_attempts == 8 && total_attempts == 8) {
 		console.log("max attempts and total attempts both are 8")
-		if(dispo_3130(dho)) {
-			console.log("3130 true");
-			return 3130;
+		
+		var plurality = true;
+		if(dho[5150] > 1 && dho[5150] == dho[5140]) {
+			for(var key in dho) {
+				if(dho[key] > dho[5150]) {
+					plurality = false;
+				}
+			}
+			if (plurality) {
+				return 3150;
+			}
+		}
+
+		if(dho[5150] > 1 && dho[5150] == dho[5130]) {
+			for(var key in dho) {
+				if(dho[key] > dho[5150]) {
+					plurality = false;
+				}
+			}
+			if (plurality) {
+				return 3150;
+			}
+		}
+
+		if(dho[5140] > 1 && dho[5140] == dho[5130]) {
+			for(var key in dho) {
+				if(dho[key] > dho[5140]) {
+					plurality = false;
+				}
+			}
+			if (plurality) {
+				return 3140;
+			}
+		}
+
+		if(dispo_3150(dho)) {
+			console.log("3150 true");
+			return 3150;
 		}
 		if(dispo_3140(dho)) {
 			console.log("3140 true");
 			return 3140;
 		}
-		if(dispo_3150(dho)) {
-			console.log("3150 true");
-			return 3150;
+		if(dispo_3130(dho)) {
+			console.log("3130 true");
+			return 3130;
 		}
 	}
 	return new_dispo;
