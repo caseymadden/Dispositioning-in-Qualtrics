@@ -214,6 +214,9 @@ function run_logic_checks(dho, total_attempts) {
 		if(dho[5111] == 2) {
 			return true;
 		}
+		if(dho[5111] > 0 && dho[5050]) {
+			return true;
+		}
 		return false;
 	}
 
