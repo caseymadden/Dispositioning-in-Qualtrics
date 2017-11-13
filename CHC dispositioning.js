@@ -105,6 +105,8 @@ function run_logic_checks(dho, total_attempts) {
 		max_attempts = 8;
 	}
 
+	var wave = "${e://Field/Wave}"
+
 	console.log("disp_history_obj: " + dho);
 	console.log("total_attempts: " + total_attempts);
 	console.log("max_attempts: " + max_attempts)
@@ -175,6 +177,70 @@ function run_logic_checks(dho, total_attempts) {
 		return true;
 	}
 
+	function dispo_2120(dho) {
+		// oh my no
+		// for(var key in dho) {
+		// 	if()
+		// }
+	}
+
+	function dispo_2112(dho) {
+		if(dho[5112] == 2) {
+			return true;
+		}
+		if(dho[5112] > 0 && dho[5111] > 0) {
+			return true;
+		}
+		if(dho[5112] > 0 && dho[5050] > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2117(dho) {
+		if(dho[5117] == 2) {
+			return true;
+		}
+		if(dho[5117] > 0 && dho[5111] > 0) {
+			return true;
+		}
+		if(dho[5117] > 0 && dho[5050] > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2111(dho) {
+		if(dho[5111] == 2) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2112_10_attempts(dho) {
+		// 2112 - 10+ attempts with 1 refusal by SP
+		if(dho[2112] > 0 && !wave) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2117_10_attempts(dho) {
+		// 2117 - 10+ attempts with 1 refusal by proxy
+		if(dho[2112] == 0 && dho[5117] > 0 && !wave) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2111_10_attempts(dho) {
+		// 2111 - 10+ attempts with one 5111
+		if(dho[5112] == 0 && dho[5117] == 0 && dho[5111] > 0) {
+			return true;
+		}
+		return false;
+	}
+
 	// Run checks on 6 attempts IF max_attempts = 6
 	if(max_attempts == 6 && total_attempts == 6) {
 		if(dispo_4200(dho)) {
@@ -240,6 +306,34 @@ function run_logic_checks(dho, total_attempts) {
 			return 3130;
 		}
 	}
+
+	// Run these checks if max_attempts > 9 and attempt number > 9
+
+	if(max_attempts > 9 && total_attempts > 9) {
+		if(dispo_2112_10_attempts(dho)) {
+			return 2112;
+		}
+		if(dispo_2117_10_attempts(dho)) {
+			return 2117;
+		}
+		if(dispo_2111_10_attempts(dho)) {
+			return 2111;
+		}
+	}
+
+	// Run these checks on every dispo
+
+	if(dispo_2112(dho)) {
+		return 2112;
+	}
+	if(dispo_2117(dho)) {
+		return 2117;
+	}
+	if(dispo_2111(dho)) {
+		return 2111;
+	}
+
+
 	return new_dispo;
 }
 
