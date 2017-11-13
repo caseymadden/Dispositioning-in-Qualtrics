@@ -1,12 +1,7 @@
 
 <script>
-<<<<<<< HEAD
-// VERSION 1.0 - DISP HISTORY BRANCH
-// Last edited 11/810/2017
-=======
-//VERSION 1.0
-//Last updated 10/28/2017
->>>>>>> master
+//VERSION 2.0
+//Last updated 11/13/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
