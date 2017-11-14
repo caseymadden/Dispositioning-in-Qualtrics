@@ -1,7 +1,7 @@
 
 <script>
-//VERSION 2.0
-//Last updated 11/13/2017
+//VERSION 3.0
+//Last updated 11/14/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -101,15 +101,19 @@ function create_disp_history_JSON(IDISP_array) {
 
 function run_logic_checks(dho, total_attempts) {
 	var max_attempts = 6;
-	if(dho[5100] > 0 || dho[5105] > 0 || dho[5107] > 0 || dho[5121] > 0 || dho[5320] > 0 || dho[5330] > 0 || dho[5560] > 0 || dho[5130] > 0 || dho[5140] > 0 || dho[5150] > 0) {
+	if(dho[5130] > 0 || dho[5140] > 0 || dho[5150] > 0 || dho[5220] > 0) {
 		max_attempts = 8;
+	}
+	if(dho[5100] > 0 || dho[5050] > 0 || dho[5105] > 0 || dho[5107] > 0 || dho[5111] > 0 || dho[5112] > 0 || dho[5117] > 0 || dho[5120] > 0 || dho[5121] > 0 || dho[5320] > 0 || dho[5330] > 0 || dho[5560] > 0 || dho[9000] > 0 || dho[9100] > 0) {
+		max_attempts = 10;
 	}
 
 	var wave = "${e://Field/Wave}"
 
 	console.log("disp_history_obj: " + dho);
 	console.log("total_attempts: " + total_attempts);
-	console.log("max_attempts: " + max_attempts)
+	console.log("max_attempts: " + max_attempts);
+	console.log("wave: " + wave);
 	var new_dispo;
 
 	{
@@ -178,10 +182,30 @@ function run_logic_checks(dho, total_attempts) {
 	}
 
 	function dispo_2120(dho) {
-		// oh my no
-		// for(var key in dho) {
-		// 	if()
-		// }
+		console.log("running dispo_2120");
+		// 2120 - Two refusals OR FINAL REFUSAL after SP/Proxy has started survey, but before the partial complete point
+		if(wave > 0 && wave < 25) {
+			console.log("wave > 0 and < 25");
+			if(dho[5112] > 0 && dho[5111] > 0) {
+				return true;
+			}
+			if(dho[5117] > 0 && dho[5111] > 0) {
+				return true;
+			}
+			if(dho[5112] > 0 && dho[5050] > 0) {
+				return true;
+			}
+			if(dho[5117] > 0 && dho[5050] > 0) {
+				return true;
+			}
+			if(dho[5112] == 2) {
+				return true;
+			}
+			if(dho[5117] == 2) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	function dispo_2112(dho) {
@@ -222,7 +246,8 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_2112_10_attempts(dho) {
 		// 2112 - 10+ attempts with 1 refusal by SP
-		if(dho[2112] > 0 && !wave) {
+		console.log("running dispo_2112_10_attempts");
+		if(dho[5112] > 0 && wave == 0) {
 			return true;
 		}
 		return false;
@@ -230,7 +255,8 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_2117_10_attempts(dho) {
 		// 2117 - 10+ attempts with 1 refusal by proxy
-		if(dho[2112] == 0 && dho[5117] > 0 && !wave) {
+		console.log("running dispo_2117_10_attempts");
+		if(dho[5112] == 0 && dho[5117] > 0 && wave == 0) {
 			return true;
 		}
 		return false;
@@ -238,6 +264,7 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_2111_10_attempts(dho) {
 		// 2111 - 10+ attempts with one 5111
+		console.log("running dispo_2111_10_attempts");
 		if(dho[5112] == 0 && dho[5117] == 0 && dho[5111] > 0) {
 			return true;
 		}
@@ -314,28 +341,37 @@ function run_logic_checks(dho, total_attempts) {
 
 	if(max_attempts > 9 && total_attempts > 9) {
 		if(dispo_2112_10_attempts(dho)) {
+			console.log("2112 true");
 			return 2112;
 		}
 		if(dispo_2117_10_attempts(dho)) {
+			console.log("2117 true");
 			return 2117;
 		}
 		if(dispo_2111_10_attempts(dho)) {
+			console.log("2111 true");
 			return 2111;
 		}
 	}
 
 	// Run these checks on every dispo
 
+	if(dispo_2120(dho)) {
+		console.log("2120 true");
+		return 2120;
+	}
 	if(dispo_2112(dho)) {
+		console.log("2112 true");
 		return 2112;
 	}
 	if(dispo_2117(dho)) {
+		console.log("2117 true");
 		return 2117;
 	}
 	if(dispo_2111(dho)) {
+		console.log("2111 true");
 		return 2111;
 	}
-
 
 	return new_dispo;
 }
@@ -517,51 +553,52 @@ $('.close').click(function(){
 });
 
 //Complete
-var completeButton = document.getElementById('complete');
-completeButton.onclick = function() {
-	modal.style.display = "none";
-	completeModal.style.display = "block";
-}
-var completeWithSPButton = document.getElementById('completeWithSP');
-completeWithSPButton.onclick = function() {
-	completeModal.style.display = "none";
-	dispo1100Modal.style.display = "block";
-}
+{
+	var completeButton = document.getElementById('complete');
+	completeButton.onclick = function() {
+		modal.style.display = "none";
+		completeModal.style.display = "block";
+	}
+	var completeWithSPButton = document.getElementById('completeWithSP');
+	completeWithSPButton.onclick = function() {
+		completeModal.style.display = "none";
+		dispo1100Modal.style.display = "block";
+	}
 
-var dispo1100nextButton = document.getElementById('dispo1100next');
-dispo1100nextButton.onclick = function() {
-	window.open(get_embedded_data_url(1100));
-}
+	var dispo1100nextButton = document.getElementById('dispo1100next');
+	dispo1100nextButton.onclick = function() {
+		window.open(get_embedded_data_url(1100));
+	}
 
-var dispo1100backButton = document.getElementById('dispo1100back');
-dispo1100backButton.onclick =function() {
-	dispo1100Modal.style.display = "none";
-	completeModal.style.display = "block";
-}
+	var dispo1100backButton = document.getElementById('dispo1100back');
+	dispo1100backButton.onclick =function() {
+		dispo1100Modal.style.display = "none";
+		completeModal.style.display = "block";
+	}
 
-var completeWithAProxyButton = document.getElementById('completeWithAProxy');
-completeWithAProxyButton.onclick = function() {
-	completeModal.style.display = "none";
-	dispo1107Modal.style.display = "block";
-}
+	var completeWithAProxyButton = document.getElementById('completeWithAProxy');
+	completeWithAProxyButton.onclick = function() {
+		completeModal.style.display = "none";
+		dispo1107Modal.style.display = "block";
+	}
 
-var dispo1107nextButton = document.getElementById('dispo1107next');
-dispo1107nextButton.onclick = function() {
-	window.open(get_embedded_data_url(1107));
-}
+	var dispo1107nextButton = document.getElementById('dispo1107next');
+	dispo1107nextButton.onclick = function() {
+		window.open(get_embedded_data_url(1107));
+	}
 
-var dispo1107backButton = document.getElementById('dispo1107back');
-dispo1107backButton.onclick = function() {
-	dispo1107Modal.style.display = "none";
-	completeModal.style.display = "block";
-}
+	var dispo1107backButton = document.getElementById('dispo1107back');
+	dispo1107backButton.onclick = function() {
+		dispo1107Modal.style.display = "none";
+		completeModal.style.display = "block";
+	}
 
-var completeModalBackButton = document.getElementById('completeModalBackButton');
-completeModalBackButton.onclick = function() {
-	completeModal.style.display = "none";
-	modal.style.display = "block";
+	var completeModalBackButton = document.getElementById('completeModalBackButton');
+	completeModalBackButton.onclick = function() {
+		completeModal.style.display = "none";
+		modal.style.display = "block";
+	}
 }
-
 //Supervisor attention
 {
 	var supervisorAttentionButton = document.getElementById('supervisorAttention');
