@@ -1,7 +1,7 @@
 
 <script>
 //VERSION 3.0
-//Last updated 11/14/2017
+//Last updated 11/17/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -77,11 +77,9 @@ function create_disp_history_JSON(IDISP_array) {
 
 	// Iterate through IDISP_array and for each cell in IDISP_array increment the corresponding JSON property by 1
 	for(var i = 0; i < 21; ++i) {
-		//console.log("disp_history_obj.hasOwnProperty: " + disp_history_obj.hasOwnProperty(IDISP_array[i]))
 		if(disp_history_obj.hasOwnProperty(IDISP_array[i])) {
 			array_content = IDISP_array[i];
 			array_content = parseInt(array_content);
-			//console.log("array_content: " + array_content);
 			disp_history_obj[array_content] += 1;
 		}
 	}
@@ -101,12 +99,23 @@ function create_disp_history_JSON(IDISP_array) {
 
 function run_logic_checks(dho, total_attempts) {
 	var max_attempts = 6;
+	var six_attempts = true;
+	var eight_attempts = false;
+	var ten_attempts = false;
+
 	if(dho[5130] > 0 || dho[5140] > 0 || dho[5150] > 0 || dho[5220] > 0) {
 		max_attempts = 8;
+		six_attempts = false;
+		eight_attempts = true;
 	}
 	if(dho[5100] > 0 || dho[5050] > 0 || dho[5105] > 0 || dho[5107] > 0 || dho[5111] > 0 || dho[5112] > 0 || dho[5117] > 0 || dho[5120] > 0 || dho[5121] > 0 || dho[5320] > 0 || dho[5330] > 0 || dho[5560] > 0 || dho[9000] > 0 || dho[9100] > 0) {
 		max_attempts = 10;
+		eight_attempts = false;
+		ten_attempts = true;
 	}
+	max_attempts += dho[5100];
+	max_attempts += dho[5105];
+	max_attempts += dho[5107];
 
 	var wave = "${e://Field/Wave}"
 
@@ -271,8 +280,19 @@ function run_logic_checks(dho, total_attempts) {
 		return false;
 	}
 
+	function dispo_2210_10_attempts(dho, wave) {
+		// 2210 - 10+ attempts with one 5100 and no refusals without SP initiating the survey
+		console.log("running dispo_2210_10_attempts");
+		if(wave < 1 && dho[5100] > 0 && dho[5111] == 0 && dho[5112] == 0 && dho[5117] == 0 && dho[5050] == 0) {
+			console.log("return true");
+			return true;
+		}
+		console.log("return false");
+		return false;
+	}
+
 	// Run checks on 6 attempts IF max_attempts = 6
-	if(max_attempts == 6 && total_attempts == 6) {
+	if(six_attempts && total_attempts == 6) {
 		if(dispo_4200(dho)) {
 			return 4200;
 		}
@@ -286,7 +306,7 @@ function run_logic_checks(dho, total_attempts) {
 
 	// Run these checks if max_attempts = 8
 	
-	if(max_attempts == 8 && total_attempts == 8) {
+	if(eight_attempts && total_attempts == 8) {
 		console.log("max attempts and total attempts both are 8")
 		
 		var plurality = true;
@@ -339,7 +359,7 @@ function run_logic_checks(dho, total_attempts) {
 
 	// Run these checks if max_attempts > 9 and attempt number > 9
 
-	if(max_attempts > 9 && total_attempts > 9) {
+	if(ten_attempts && total_attempts > 9) {
 		if(dispo_2112_10_attempts(dho)) {
 			console.log("2112 true");
 			return 2112;
@@ -351,6 +371,10 @@ function run_logic_checks(dho, total_attempts) {
 		if(dispo_2111_10_attempts(dho)) {
 			console.log("2111 true");
 			return 2111;
+		}
+		if(dispo_2210_10_attempts(dho, wave)) {
+			console.log("2210 true");
+			return 2210;
 		}
 	}
 
@@ -487,6 +511,9 @@ $('<div id="scheduledAnInPersonInterviewModal" class="modal"><div class="modal-c
 //Spoke with a person
 {
 	$('<div id="spokeWithAPersonModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>INTERVIEWER: You indicated that you spoke with a person before the interview was terminated. Please select the appropriate response below to indicate how the interview ended. </p><ul style="list-style:none;"><li><li><button id="spokeWithAPersonModalRefusal">*A refusal/hang up/termination</button></li><li><button id="spokeWithAPersonModalFinalRefusal">*Final refusal/hang up/termination</button></li><li><button id="spokeWithAPersonLanguageProblem">Language problem</button></li><li><button id="spokeWithAPersonPhysicalOrMentalImpairment">Physical or mental impairment</button></li><li><button id="spokeWithAPersonBusinessOnly">Business only</button></li><li><button id="spokeWithAPersonReachedDifferentNumber">Number reached different than number dialed</button></li><li><button id="spokeWithAPersonPhoneNumberNotInPa">Number does not belong to respondent</button></li><li><button id="spokeWithAPersonCallDropped">Call dropped</button></li><li><button id="spokeWithAPersonModalback">Back</button></li></ul></div></div>').appendTo("body");
+	$('<div id="physicalOrMentalImpairmentModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Soft or final?</p><ul style="list-style:none;"><li><button id="physicalOrMentalImpairmentSoft">Call again later</button></li><li><button id="physicalOrMentalImpairmentHard">Do not call again</button></li><li><button id="physicalOrMentalImpairmentModalback">Back</button></li></ul></div></div>').appendTo("body");
+	$('<div id="dispo2320Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 2320</p><p>Physical or mental impairment FINAL</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo2320next">Next</button></li><li><button id="dispo2320back">Back</button></li></ul></div></div>').appendTo("body");
+	$('<div id="dispo5320Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5320</p><p>Physical or mental impairment SOFT</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo5320next">Next</button></li><li><button id="dispo5320back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="softRefusalModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Did the Selected Person refuse?</p><ul style="list-style:none;"><li><button id="softRefuseYes">Yes</button></li><li><button id="softRefuseNo">No</button></li><li><button id="softRefuseDontKnow">Dont know</button></li><li><button id="softRefusalModalback">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo5112Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5112</p><p>T. Refusal by selected respondent</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo5112next">Next</button></li><li><button id="dispo5112back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="softProxyRefusalModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Did a proxy refuse to be interviewed on behalf of the selected person?</p><ul style="list-style:none;"><li><button id="softProxyRefuseYes">Yes</button></li><li><button id="softProxyRefuseNo">No</button></li><li><button id="softProxyRefusalBack">Back</button></li></ul></div></div>').appendTo("body");
@@ -724,11 +751,38 @@ $('.close').click(function(){
 			spokeWithAPersonModal.style.display = "block";
 		}
 
-		var spokeWithAPersonPhysicalOrMentalImpairmentButton = document.getElementById('spokeWithAPersonPhysicalOrMentalImpairment')
-		spokeWithAPersonPhysicalOrMentalImpairment.onclick = function() {
-		    spokeWithAPersonModal.style.display = "none";
-		    dispo5320Modal.style.display = "block";
+		var spokeWithAPersonPhysicalOrMentalImpairmentButton = document.getElementById('spokeWithAPersonPhysicalOrMentalImpairment');
+		spokeWithAPersonPhysicalOrMentalImpairmentButton.onclick = function() {
+		   spokeWithAPersonModal.style.display = "none";
+		   physicalOrMentalImpairmentModal.style.display = "block";
 		}
+		var physicalOrMentalImpairmentHardButton = document.getElementById('physicalOrMentalImpairmentHard');
+		physicalOrMentalImpairmentHardButton.onclick = function() {
+			physicalOrMentalImpairmentModal.style.display = "none";
+			dispo2320Modal.style.display = "block";
+		}
+
+		var physicalOrMentalImpairmentSoftButton = document.getElementById('physicalOrMentalImpairmentSoft');
+		physicalOrMentalImpairmentSoftButton.onclick = function() {
+			physicalOrMentalImpairmentModal.style.display = "none";
+			dispo5320Modal.style.display = "block";
+		}
+		var physicalOrMentalImpairmentModalbackButton = document.getElementById('physicalOrMentalImpairmentModalback');
+		physicalOrMentalImpairmentModalbackButton.onclick = function() {
+			physicalOrMentalImpairmentModal.style.display = "none";
+			modal.style.display = "block";
+		}
+
+		var dispo2320nextButton = document.getElementById('dispo2320next');
+		dispo2320nextButton.onclick = function() {
+	        window.open(get_embedded_data_url(2320));
+	    }
+		var dispo2320backButton = document.getElementById('dispo2320back');
+		dispo2320backButton.onclick = function() {
+			dispo2320Modal.style.display = "none";
+			physicalOrMentalImpairmentModal.style.display = "block";
+		}
+
 		var dispo5320nextButton = document.getElementById('dispo5320next');
 		dispo5320nextButton.onclick = function() {
 	        window.open(get_embedded_data_url(5320));
@@ -736,7 +790,7 @@ $('.close').click(function(){
 		var dispo5320backButton = document.getElementById('dispo5320back');
 		dispo5320backButton.onclick = function() {
 			dispo5320Modal.style.display = "none";
-			spokeWithAPersonModal.style.display = "block";
+			physicalOrMentalImpairmentModal.style.display = "block";
 		}
 
 		var spokeWithAPersonBusinessOnlyButton = document.getElementById('spokeWithAPersonBusinessOnly');
