@@ -119,10 +119,10 @@ function run_logic_checks(dho, total_attempts) {
 
 	var wave = "${e://Field/Wave}"
 
-	console.log("disp_history_obj: " + dho);
-	console.log("total_attempts: " + total_attempts);
-	console.log("max_attempts: " + max_attempts);
-	console.log("wave: " + wave);
+	// console.log("disp_history_obj: " + dho);
+	// console.log("total_attempts: " + total_attempts);
+	// console.log("max_attempts: " + max_attempts);
+	// console.log("wave: " + wave);
 	var new_dispo;
 
 	{
@@ -153,9 +153,9 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_3130(dho) {
 	// 3130 - 8 attempts with plurality of attempts assigned 5130
-		console.log("function dispo_3130 entered");
+		// console.log("function dispo_3130 entered");
 		for(var key in dho) {
-			console.log(dho[key] + " vs. " + dho[5130]);
+			// console.log(dho[key] + " vs. " + dho[5130]);
 			if(key != 5130 && dho[key] >= dho[5130]) {
 				return false;
 			}
@@ -166,35 +166,35 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_3140(dho) {
 	// 3140 - 8 attempts with plurality of attempts assigned 5140
-		console.log("function dispo_3140 entered");
+		// console.log("function dispo_3140 entered");
 		for(var key in dho) {
-		console.log(dho[key] + " vs. " + dho[5140]);
+		// console.log(dho[key] + " vs. " + dho[5140]);
 			if(key != 5140 && dho[key] >= dho[5140]) {
 				return false;
 			}
 		}
-		console.log("return true");
+		// console.log("return true");
 		return true;
 	}
 
 	function dispo_3150(dho) {
 	// 3150 - 8 attempts with plurality of attempts assigned 5140
-		console.log("function dispo_3150");
+		// console.log("function dispo_3150");
 		for(var key in dho) {
-		console.log(dho[key] + " vs. " + dho[5150]);
+		// console.log(dho[key] + " vs. " + dho[5150]);
 			if(key != 5150 && dho[key] >= dho[5150]) {
 				return false;
 			}
 		}
-		console.log("returning true");
+		// console.log("returning true");
 		return true;
 	}
 
 	function dispo_2120(dho) {
-		console.log("running dispo_2120");
+		// console.log("running dispo_2120");
 		// 2120 - Two refusals OR FINAL REFUSAL after SP/Proxy has started survey, but before the partial complete point
 		if(wave > 0 && wave < 25) {
-			console.log("wave > 0 and < 25");
+			// console.log("wave > 0 and < 25");
 			if(dho[5112] > 0 && dho[5111] > 0) {
 				return true;
 			}
@@ -255,7 +255,7 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_2112_10_attempts(dho) {
 		// 2112 - 10+ attempts with 1 refusal by SP
-		console.log("running dispo_2112_10_attempts");
+		// console.log("running dispo_2112_10_attempts");
 		if(dho[5112] > 0 && wave == 0) {
 			return true;
 		}
@@ -264,7 +264,7 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_2117_10_attempts(dho) {
 		// 2117 - 10+ attempts with 1 refusal by proxy
-		console.log("running dispo_2117_10_attempts");
+		// console.log("running dispo_2117_10_attempts");
 		if(dho[5112] == 0 && dho[5117] > 0 && wave == 0) {
 			return true;
 		}
@@ -273,7 +273,7 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_2111_10_attempts(dho) {
 		// 2111 - 10+ attempts with one 5111
-		console.log("running dispo_2111_10_attempts");
+		// console.log("running dispo_2111_10_attempts");
 		if(dho[5112] == 0 && dho[5117] == 0 && dho[5111] > 0) {
 			return true;
 		}
@@ -282,12 +282,26 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_2210_10_attempts(dho, wave) {
 		// 2210 - 10+ attempts with one 5100 and no refusals without SP initiating the survey
-		console.log("running dispo_2210_10_attempts");
+		// console.log("running dispo_2210_10_attempts");
 		if(wave < 1 && dho[5100] > 0 && dho[5111] == 0 && dho[5112] == 0 && dho[5117] == 0 && dho[5050] == 0) {
-			console.log("return true");
+			// console.log("return true");
 			return true;
 		}
-		console.log("return false");
+		// console.log("return false");
+		return false;
+	}
+
+	function dispo_1200_20_attempts(wave) {
+		if(wave > 25) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2120_20_attempts(wave) {
+		if(wave > 0 && wave < 25) {
+			return true;
+		}
 		return false;
 	}
 
@@ -307,7 +321,7 @@ function run_logic_checks(dho, total_attempts) {
 	// Run these checks if max_attempts = 8
 	
 	if(eight_attempts && total_attempts == 8) {
-		console.log("max attempts and total attempts both are 8")
+		// console.log("max attempts and total attempts both are 8")
 		
 		var plurality = true;
 		if(dho[5150] > 1 && dho[5150] == dho[5140]) {
@@ -344,15 +358,15 @@ function run_logic_checks(dho, total_attempts) {
 		}
 
 		if(dispo_3150(dho)) {
-			console.log("3150 true");
+			// console.log("3150 true");
 			return 3150;
 		}
 		if(dispo_3140(dho)) {
-			console.log("3140 true");
+			// console.log("3140 true");
 			return 3140;
 		}
 		if(dispo_3130(dho)) {
-			console.log("3130 true");
+			// console.log("3130 true");
 			return 3130;
 		}
 	}
@@ -361,19 +375,19 @@ function run_logic_checks(dho, total_attempts) {
 
 	if(ten_attempts && total_attempts > 9) {
 		if(dispo_2112_10_attempts(dho)) {
-			console.log("2112 true");
+			// console.log("2112 true");
 			return 2112;
 		}
 		if(dispo_2117_10_attempts(dho)) {
-			console.log("2117 true");
+			// console.log("2117 true");
 			return 2117;
 		}
 		if(dispo_2111_10_attempts(dho)) {
-			console.log("2111 true");
+			// console.log("2111 true");
 			return 2111;
 		}
 		if(dispo_2210_10_attempts(dho, wave)) {
-			console.log("2210 true");
+			// console.log("2210 true");
 			return 2210;
 		}
 	}
@@ -381,22 +395,34 @@ function run_logic_checks(dho, total_attempts) {
 	// Run these checks on every dispo
 
 	if(dispo_2120(dho)) {
-		console.log("2120 true");
+		// console.log("2120 true");
 		return 2120;
 	}
 	if(dispo_2112(dho)) {
-		console.log("2112 true");
+		// console.log("2112 true");
 		return 2112;
 	}
 	if(dispo_2117(dho)) {
-		console.log("2117 true");
+		// console.log("2117 true");
 		return 2117;
 	}
 	if(dispo_2111(dho)) {
-		console.log("2111 true");
+		// console.log("2111 true");
 		return 2111;
 	}
 
+	// Run these checks if total_attempts = 20
+	if(total_attempts == 20) {
+		if(dispo_1200_20_attempts(wave)) {
+				// console.log("1200 true");
+				return 1200;
+			} else if(dispo_2120_20_attempts(wave)) {
+				// console.log("2120 true");
+				return 2120;
+			} else {
+				return 2210;
+			}
+		}
 	return new_dispo;
 }
 
@@ -404,7 +430,7 @@ function get_embedded_data_url(dispo) {
 	var IDISP_array = get_IDISP_array(dispo);
 	var new_dispo = create_disp_history_JSON(IDISP_array);
 
-	console.log("IDISP_array: " + IDISP_array);
+	// console.log("IDISP_array: " + IDISP_array);
 
 	var intVStatus = 3;
 	if(dispo < 5000) {
@@ -473,9 +499,6 @@ function loadJs(src, callback) {
 }
 
 loadJs('https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js', function() {
-    //$('body').append('<p>It works!</p>');
-    //alert("loaded JQuery")
-
     var element =  document.getElementById('myModal');
 
     if (typeof(element) != 'undefined' && element != null)
@@ -808,6 +831,7 @@ $('.close').click(function(){
 			dispo4500Modal.style.display = "none";
 			spokeWithAPersonModal.style.display = "block";
 		}
+
 		var spokeWithAPersonReachedDifferentNumberButton = document.getElementById('spokeWithAPersonReachedDifferentNumber');
 		spokeWithAPersonReachedDifferentNumberButton.onclick = function() {
 		    spokeWithAPersonModal.style.display = "none";
@@ -822,7 +846,7 @@ $('.close').click(function(){
 			dispo4300Modal.style.display = "none";
 			spokeWithAPersonModal.style.display = "block";
 		}
-		
+
 		var spokeWithAPersonNotInPAButton = document.getElementById('spokeWithAPersonNotInPA');
 		spokeWithAPersonNotInPAButton.onclick = function() {
 			spokeWithAPersonModal.style.display = "none";
@@ -867,7 +891,6 @@ $('.close').click(function(){
 			dispo5121Modal.style.display = "none";
 			spokeWithAPersonModal.style.display = "block";
 		}
-
 		var spokeWithAPersonModalbackButton = document.getElementById('spokeWithAPersonModalback');
 		spokeWithAPersonModalbackButton.onclick = function() {
 		    spokeWithAPersonModal.style.display = "none";
@@ -1248,7 +1271,6 @@ $('.close').click(function(){
 		modal.style.display = "block";
 	}
 }
-        //alert("there, I added it")  
     }
 });
 
