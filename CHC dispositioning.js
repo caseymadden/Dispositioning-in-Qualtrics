@@ -1,13 +1,437 @@
 
 <script>
-//VERSION 1.0
-//Last updated 10/28/2017
+//VERSION 3.0
+//Last updated 11/17/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
+function get_IDISP_array(dispo) {
+	// Create an array for IDISPS to pipe into URL. Ensure all cells have something in them, even if it's just an empty string
+	var IDISP_array = [];
+	for(var j= 0; j < 21; ++j) {
+		IDISP_array[j] = "";
+	}
+
+	currentUrl = window.location.href;
+	var i = 1;
+
+	while(i < 21) {
+		// Create a string for the current IDISP we want to examine in the URL
+		if(i < 10) {
+			idisp_iteration = "IDISP0" + i;
+		}
+		else {
+			idisp_iteration = "IDISP" + i;
+		}
+
+		// Find the disposition code associated with the IDISP string we made earlier by locating the substring IDISP(X)
+		// When IDISP(x) is located, we grab whatever is 4 characters after it, which is either garbled text or the dispo code
+		dispo_code = currentUrl.substring(currentUrl.indexOf(idisp_iteration));
+		dispo_code = dispo_code.substring(8,12);
+
+		// If the dispo code is a number, add the code to the IDISP_array, thereby creating an array filled with disp history
+		if(!isNaN(dispo_code)) {
+			IDISP_array[i] = dispo_code;
+			i += 1;
+		}
+
+		// If the dispo_code is not a number, we add the dispo code the interviewer selected to the end of the array
+		// The array is now a complete history. We break out of the loop and return the array
+		if(isNaN(dispo_code)) {
+			IDISP_array[i] = dispo;
+			break;
+		}
+	}
+
+	return IDISP_array;
+}
+
+function create_disp_history_JSON(IDISP_array) {
+
+	// Create JSON
+	var disp_history_obj = {
+		5050:0,
+		5100:0,
+		5105:0,
+		5107:0,
+		5111:0,
+		5112:0,
+		5117:0,
+		5121:0,
+		5130:0,
+		5140:0,
+		5150:0,
+		5200:0,
+		5300:0,
+		5320:0,
+		5330:0,
+		5400:0,
+		5550:0,
+		5560:0,
+		5700:0,
+		5900:0,
+		9100:0
+	}
+
+	// Iterate through IDISP_array and for each cell in IDISP_array increment the corresponding JSON property by 1
+	for(var i = 0; i < 21; ++i) {
+		if(disp_history_obj.hasOwnProperty(IDISP_array[i])) {
+			array_content = IDISP_array[i];
+			array_content = parseInt(array_content);
+			disp_history_obj[array_content] += 1;
+		}
+	}
+
+	// Get total number of attempts
+
+	var total_attempts = 0;
+	for(var key in disp_history_obj) {
+		total_attempts += disp_history_obj[key];
+	}
+
+	// Pass tree to method that runs logic checks
+	var new_dispo = run_logic_checks(disp_history_obj, total_attempts);
+
+	return new_dispo;
+}
+
+function run_logic_checks(dho, total_attempts) {
+	var max_attempts = 6;
+	var six_attempts = true;
+	var eight_attempts = false;
+	var ten_attempts = false;
+
+	if(dho[5130] > 0 || dho[5140] > 0 || dho[5150] > 0 || dho[5220] > 0) {
+		max_attempts = 8;
+		six_attempts = false;
+		eight_attempts = true;
+	}
+	if(dho[5100] > 0 || dho[5050] > 0 || dho[5105] > 0 || dho[5107] > 0 || dho[5111] > 0 || dho[5112] > 0 || dho[5117] > 0 || dho[5120] > 0 || dho[5121] > 0 || dho[5320] > 0 || dho[5330] > 0 || dho[5560] > 0 || dho[9000] > 0 || dho[9100] > 0) {
+		max_attempts = 10;
+		eight_attempts = false;
+		ten_attempts = true;
+	}
+	max_attempts += dho[5100];
+	max_attempts += dho[5105];
+	max_attempts += dho[5107];
+
+	var wave = "${e://Field/Wave}"
+
+	// console.log("disp_history_obj: " + dho);
+	// console.log("total_attempts: " + total_attempts);
+	// console.log("max_attempts: " + max_attempts);
+	// console.log("wave: " + wave);
+	var new_dispo;
+
+	{
+		function dispo_4200(dho) {
+			// At least one 5200 dispo
+			if(dho[5200] > 0) {
+				return true;
+			}
+			return false;
+		}
+	
+		function dispo_4300(dho) {
+			// At least one 5300 dispo
+			if(dho[5300] > 0) {
+				return true;
+			}
+			return false;
+		}
+	
+		function dispo_4400(dho) {
+			// At least one 5400 dispo
+			if(dho[5400] > 0) {
+				return true;
+			}
+			return false;
+		}
+	}
+
+	function dispo_3130(dho) {
+	// 3130 - 8 attempts with plurality of attempts assigned 5130
+		// console.log("function dispo_3130 entered");
+		for(var key in dho) {
+			// console.log(dho[key] + " vs. " + dho[5130]);
+			if(key != 5130 && dho[key] >= dho[5130]) {
+				return false;
+			}
+		}
+		console.log("returning true");
+		return true;
+	}
+
+	function dispo_3140(dho) {
+	// 3140 - 8 attempts with plurality of attempts assigned 5140
+		// console.log("function dispo_3140 entered");
+		for(var key in dho) {
+		// console.log(dho[key] + " vs. " + dho[5140]);
+			if(key != 5140 && dho[key] >= dho[5140]) {
+				return false;
+			}
+		}
+		// console.log("return true");
+		return true;
+	}
+
+	function dispo_3150(dho) {
+	// 3150 - 8 attempts with plurality of attempts assigned 5140
+		// console.log("function dispo_3150");
+		for(var key in dho) {
+		// console.log(dho[key] + " vs. " + dho[5150]);
+			if(key != 5150 && dho[key] >= dho[5150]) {
+				return false;
+			}
+		}
+		// console.log("returning true");
+		return true;
+	}
+
+	function dispo_2120(dho) {
+		// console.log("running dispo_2120");
+		// 2120 - Two refusals OR FINAL REFUSAL after SP/Proxy has started survey, but before the partial complete point
+		if(wave > 0 && wave < 25) {
+			// console.log("wave > 0 and < 25");
+			if(dho[5112] > 0 && dho[5111] > 0) {
+				return true;
+			}
+			if(dho[5117] > 0 && dho[5111] > 0) {
+				return true;
+			}
+			if(dho[5112] > 0 && dho[5050] > 0) {
+				return true;
+			}
+			if(dho[5117] > 0 && dho[5050] > 0) {
+				return true;
+			}
+			if(dho[5112] == 2) {
+				return true;
+			}
+			if(dho[5117] == 2) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function dispo_2112(dho) {
+		if(dho[5112] == 2) {
+			return true;
+		}
+		if(dho[5112] > 0 && dho[5111] > 0) {
+			return true;
+		}
+		if(dho[5112] > 0 && dho[5050] > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2117(dho) {
+		if(dho[5117] == 2) {
+			return true;
+		}
+		if(dho[5117] > 0 && dho[5111] > 0) {
+			return true;
+		}
+		if(dho[5117] > 0 && dho[5050] > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2111(dho) {
+		if(dho[5111] == 2) {
+			return true;
+		}
+		if(dho[5111] > 0 && dho[5050]) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2112_10_attempts(dho) {
+		// 2112 - 10+ attempts with 1 refusal by SP
+		// console.log("running dispo_2112_10_attempts");
+		if(dho[5112] > 0 && wave == 0) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2117_10_attempts(dho) {
+		// 2117 - 10+ attempts with 1 refusal by proxy
+		// console.log("running dispo_2117_10_attempts");
+		if(dho[5112] == 0 && dho[5117] > 0 && wave == 0) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2111_10_attempts(dho) {
+		// 2111 - 10+ attempts with one 5111
+		// console.log("running dispo_2111_10_attempts");
+		if(dho[5112] == 0 && dho[5117] == 0 && dho[5111] > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2210_10_attempts(dho, wave) {
+		// 2210 - 10+ attempts with one 5100 and no refusals without SP initiating the survey
+		// console.log("running dispo_2210_10_attempts");
+		if(wave < 1 && dho[5100] > 0 && dho[5111] == 0 && dho[5112] == 0 && dho[5117] == 0 && dho[5050] == 0) {
+			// console.log("return true");
+			return true;
+		}
+		// console.log("return false");
+		return false;
+	}
+
+	function dispo_1200_20_attempts(wave) {
+		if(wave > 25) {
+			return true;
+		}
+		return false;
+	}
+
+	function dispo_2120_20_attempts(wave) {
+		if(wave > 0 && wave < 25) {
+			return true;
+		}
+		return false;
+	}
+
+	// Run checks on 6 attempts IF max_attempts = 6
+	if(six_attempts && total_attempts == 6) {
+		if(dispo_4200(dho)) {
+			return 4200;
+		}
+		if(dispo_4400(dho)) {
+			return 4400;
+		}
+		if(dispo_4300(dho)) {
+			return 4300;
+		}
+	}
+
+	// Run these checks if max_attempts = 8
+	
+	if(eight_attempts && total_attempts == 8) {
+		// console.log("max attempts and total attempts both are 8")
+		
+		var plurality = true;
+		if(dho[5150] > 1 && dho[5150] == dho[5140]) {
+			for(var key in dho) {
+				if(dho[key] > dho[5150]) {
+					plurality = false;
+				}
+			}
+			if (plurality) {
+				return 3150;
+			}
+		}
+
+		if(dho[5150] > 1 && dho[5150] == dho[5130]) {
+			for(var key in dho) {
+				if(dho[key] > dho[5150]) {
+					plurality = false;
+				}
+			}
+			if (plurality) {
+				return 3150;
+			}
+		}
+
+		if(dho[5140] > 1 && dho[5140] == dho[5130]) {
+			for(var key in dho) {
+				if(dho[key] > dho[5140]) {
+					plurality = false;
+				}
+			}
+			if (plurality) {
+				return 3140;
+			}
+		}
+
+		if(dispo_3150(dho)) {
+			// console.log("3150 true");
+			return 3150;
+		}
+		if(dispo_3140(dho)) {
+			// console.log("3140 true");
+			return 3140;
+		}
+		if(dispo_3130(dho)) {
+			// console.log("3130 true");
+			return 3130;
+		}
+	}
+
+	// Run these checks if max_attempts > 9 and attempt number > 9
+
+	if(ten_attempts && total_attempts > 9) {
+		if(dispo_2112_10_attempts(dho)) {
+			// console.log("2112 true");
+			return 2112;
+		}
+		if(dispo_2117_10_attempts(dho)) {
+			// console.log("2117 true");
+			return 2117;
+		}
+		if(dispo_2111_10_attempts(dho)) {
+			// console.log("2111 true");
+			return 2111;
+		}
+		if(dispo_2210_10_attempts(dho, wave)) {
+			// console.log("2210 true");
+			return 2210;
+		}
+	}
+
+	// Run these checks on every dispo
+
+	if(dispo_2120(dho)) {
+		// console.log("2120 true");
+		return 2120;
+	}
+	if(dispo_2112(dho)) {
+		// console.log("2112 true");
+		return 2112;
+	}
+	if(dispo_2117(dho)) {
+		// console.log("2117 true");
+		return 2117;
+	}
+	if(dispo_2111(dho)) {
+		// console.log("2111 true");
+		return 2111;
+	}
+
+	// Run these checks if total_attempts = 20
+	if(total_attempts == 20) {
+		if(dispo_1200_20_attempts(wave)) {
+				// console.log("1200 true");
+				return 1200;
+			} else if(dispo_2120_20_attempts(wave)) {
+				// console.log("2120 true");
+				return 2120;
+			} else {
+				return 2210;
+			}
+		}
+	return new_dispo;
+}
+
 function get_embedded_data_url(dispo) {
+	var IDISP_array = get_IDISP_array(dispo);
+	var new_dispo = create_disp_history_JSON(IDISP_array);
+
+	// console.log("IDISP_array: " + IDISP_array);
+
 	var intVStatus = 3;
 	if(dispo < 5000) {
 		intVStatus = 4;
@@ -25,10 +449,35 @@ function get_embedded_data_url(dispo) {
 	url += "NSOCphone=${e://Field/NSOCphone}/";
 	url += "NSOCother=${e://Field/NSOCother}/";
 	url += "NSOCtime=${e://Field/NSOCtime}/";
-	url += "Wave=${e://Field/Wave}/";
+	url += "IDISP01=" + IDISP_array[1] + "/";
+	url += "IDISP02=" + IDISP_array[2] + "/";
+	url += "IDISP03=" + IDISP_array[3] + "/";
+	url += "IDISP04=" + IDISP_array[4] + "/";
+	url += "IDISP05=" + IDISP_array[5] + "/";
+	url += "IDISP06=" + IDISP_array[6] + "/";
+	url += "IDISP07=" + IDISP_array[7] + "/";
+	url += "IDISP08=" + IDISP_array[8] + "/";
+	url += "IDISP09=" + IDISP_array[9] + "/";
+	url += "IDISP10=" + IDISP_array[10] + "/";
+	url += "IDISP11=" + IDISP_array[11] + "/";
+	url += "IDISP12=" + IDISP_array[12] + "/";
+	url += "IDISP13=" + IDISP_array[13] + "/";
+	url += "IDISP14=" + IDISP_array[14] + "/";
+	url += "IDISP15=" + IDISP_array[15] + "/";
+	url += "IDISP16=" + IDISP_array[16] + "/";
+	url += "IDISP17=" + IDISP_array[17] + "/";
+	url += "IDISP18=" + IDISP_array[18] + "/";
+	url += "IDISP19=" + IDISP_array[19] + "/";
+	url += "IDISP20=" + IDISP_array[20] + "/";
+	url += "Wave=${e://Field/Wave}/";	
 	url += "IntVStatus=" + intVStatus + "/";
-	url += "Dispo=" + dispo;
+	if(new_dispo) {
+		url += "Dispo=" + new_dispo;
+	} else {
+		url += "Dispo=" + dispo;
+	}
 	url = url.replaceAll(' ', '_');
+	alert('Alert box to pause');
 	return url;
 }
 
@@ -50,9 +499,6 @@ function loadJs(src, callback) {
 }
 
 loadJs('https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js', function() {
-    //$('body').append('<p>It works!</p>');
-    //alert("loaded JQuery")
-
     var element =  document.getElementById('myModal');
 
     if (typeof(element) != 'undefined' && element != null)
@@ -87,7 +533,10 @@ $('<div id="scheduledAnInPersonInterviewModal" class="modal"><div class="modal-c
 
 //Spoke with a person
 {
-	$('<div id="spokeWithAPersonModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>INTERVIEWER: You indicated that you spoke with a person before the interview was terminated. Please select the appropriate response below to indicate how the interview ended. </p><ul style="list-style:none;"><li><li><button id="spokeWithAPersonModalRefusal">*A refusal/hang up/termination</button></li><li><button id="spokeWithAPersonModalFinalRefusal">*Final refusal/hang up/termination</button></li><li><button id="spokeWithAPersonLanguageProblem">Language problem</button></li><li><button id="spokeWithAPersonPhysicalOrMentalImpairment">Physical or mental impairment</button></li><li><button id="spokeWithAPersonBusinessOnly">Business only</button></li><li><button id="spokeWithAPersonReachedDifferentNumber">Number reached different than number dialed</button></li><li><button id="spokeWithAPersonPhoneNumberNotInPa">Number does not belong to respondent</button></li><li><button id="spokeWithAPersonCallDropped">Call dropped</button></li><li><button id="spokeWithAPersonModalback">Back</button></li></ul></div></div>').appendTo("body");
+	$('<div id="spokeWithAPersonModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>INTERVIEWER: You indicated that you spoke with a person before the interview was terminated. Please select the appropriate response below to indicate how the interview ended. </p><ul style="list-style:none;"><li><li><button id="spokeWithAPersonModalRefusal">*A refusal/hang up/termination</button></li><li><button id="spokeWithAPersonModalFinalRefusal">*Final refusal/hang up/termination</button></li><li><button id="spokeWithAPersonLanguageProblem">Language problem</button></li><li><button id="spokeWithAPersonPhysicalOrMentalImpairment">Physical or mental impairment</button></li><li><button id="spokeWithAPersonBusinessOnly">Business only</button></li><li><button id="spokeWithAPersonReachedDifferentNumber">Number reached different than number dialed</button></li><li><button id="spokeWithAPersonNotInPA">Resident no longer lives in PA</button></li><li><button id="spokeWithAPersonNumberDoesNotBelongToResp">Number does not belong to respondent</button></li><li><button id="spokeWithAPersonCallDropped">Call dropped</button></li><li><button id="spokeWithAPersonModalback">Back</button></li></ul></div></div>').appendTo("body");
+	$('<div id="physicalOrMentalImpairmentModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Soft or final?</p><ul style="list-style:none;"><li><button id="physicalOrMentalImpairmentSoft">Call again later</button></li><li><button id="physicalOrMentalImpairmentHard">Do not call again</button></li><li><button id="physicalOrMentalImpairmentModalback">Back</button></li></ul></div></div>').appendTo("body");
+	$('<div id="dispo2320Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 2320</p><p>Physical or mental impairment FINAL</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo2320next">Next</button></li><li><button id="dispo2320back">Back</button></li></ul></div></div>').appendTo("body");
+	$('<div id="dispo5320Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5320</p><p>Physical or mental impairment SOFT</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo5320next">Next</button></li><li><button id="dispo5320back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="softRefusalModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Did the Selected Person refuse?</p><ul style="list-style:none;"><li><button id="softRefuseYes">Yes</button></li><li><button id="softRefuseNo">No</button></li><li><button id="softRefuseDontKnow">Dont know</button></li><li><button id="softRefusalModalback">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo5112Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5112</p><p>T. Refusal by selected respondent</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo5112next">Next</button></li><li><button id="dispo5112back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="softProxyRefusalModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Did a proxy refuse to be interviewed on behalf of the selected person?</p><ul style="list-style:none;"><li><button id="softProxyRefuseYes">Yes</button></li><li><button id="softProxyRefuseNo">No</button></li><li><button id="softProxyRefusalBack">Back</button></li></ul></div></div>').appendTo("body");
@@ -107,6 +556,7 @@ $('<div id="scheduledAnInPersonInterviewModal" class="modal"><div class="modal-c
 	$('<div id="dispo4300Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 4300</p><p>FINAL nonworking number</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo4300next">Next</button></li><li><button id="dispo4300back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo4700Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 4700</p><p>Number does not belong to respondent</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo4700next">Next</button></li><li><button id="dispo4700back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo5121Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5121</p><p>T. Call dropped</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo5121next">Next</button></li><li><button id="dispo5121back">Back</button></li></ul></div></div>').appendTo("body");
+	$('<div id="dispo4100Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 4100</p><p>T. Number not in PA</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo4100next">Next</button></li><li><button id="dispo4100back">Back</button></li></ul></div></div>').appendTo("body");
 }
 
 //Did not speak with a person
@@ -154,51 +604,52 @@ $('.close').click(function(){
 });
 
 //Complete
-var completeButton = document.getElementById('complete');
-completeButton.onclick = function() {
-	modal.style.display = "none";
-	completeModal.style.display = "block";
-}
-var completeWithSPButton = document.getElementById('completeWithSP');
-completeWithSPButton.onclick = function() {
-	completeModal.style.display = "none";
-	dispo1100Modal.style.display = "block";
-}
+{
+	var completeButton = document.getElementById('complete');
+	completeButton.onclick = function() {
+		modal.style.display = "none";
+		completeModal.style.display = "block";
+	}
+	var completeWithSPButton = document.getElementById('completeWithSP');
+	completeWithSPButton.onclick = function() {
+		completeModal.style.display = "none";
+		dispo1100Modal.style.display = "block";
+	}
 
-var dispo1100nextButton = document.getElementById('dispo1100next');
-dispo1100nextButton.onclick = function() {
-	window.open(get_embedded_data_url(1100));
-}
+	var dispo1100nextButton = document.getElementById('dispo1100next');
+	dispo1100nextButton.onclick = function() {
+		window.open(get_embedded_data_url(1100));
+	}
 
-var dispo1100backButton = document.getElementById('dispo1100back');
-dispo1100backButton.onclick =function() {
-	dispo1100Modal.style.display = "none";
-	completeModal.style.display = "block";
-}
+	var dispo1100backButton = document.getElementById('dispo1100back');
+	dispo1100backButton.onclick =function() {
+		dispo1100Modal.style.display = "none";
+		completeModal.style.display = "block";
+	}
 
-var completeWithAProxyButton = document.getElementById('completeWithAProxy');
-completeWithAProxyButton.onclick = function() {
-	completeModal.style.display = "none";
-	dispo1107Modal.style.display = "block";
-}
+	var completeWithAProxyButton = document.getElementById('completeWithAProxy');
+	completeWithAProxyButton.onclick = function() {
+		completeModal.style.display = "none";
+		dispo1107Modal.style.display = "block";
+	}
 
-var dispo1107nextButton = document.getElementById('dispo1107next');
-dispo1107nextButton.onclick = function() {
-	window.open(get_embedded_data_url(1107));
-}
+	var dispo1107nextButton = document.getElementById('dispo1107next');
+	dispo1107nextButton.onclick = function() {
+		window.open(get_embedded_data_url(1107));
+	}
 
-var dispo1107backButton = document.getElementById('dispo1107back');
-dispo1107backButton.onclick = function() {
-	dispo1107Modal.style.display = "none";
-	completeModal.style.display = "block";
-}
+	var dispo1107backButton = document.getElementById('dispo1107back');
+	dispo1107backButton.onclick = function() {
+		dispo1107Modal.style.display = "none";
+		completeModal.style.display = "block";
+	}
 
-var completeModalBackButton = document.getElementById('completeModalBackButton');
-completeModalBackButton.onclick = function() {
-	completeModal.style.display = "none";
-	modal.style.display = "block";
+	var completeModalBackButton = document.getElementById('completeModalBackButton');
+	completeModalBackButton.onclick = function() {
+		completeModal.style.display = "none";
+		modal.style.display = "block";
+	}
 }
-
 //Supervisor attention
 {
 	var supervisorAttentionButton = document.getElementById('supervisorAttention');
@@ -324,11 +775,38 @@ completeModalBackButton.onclick = function() {
 			spokeWithAPersonModal.style.display = "block";
 		}
 
-		var spokeWithAPersonPhysicalOrMentalImpairmentButton = document.getElementById('spokeWithAPersonPhysicalOrMentalImpairment')
-		spokeWithAPersonPhysicalOrMentalImpairment.onclick = function() {
-		    spokeWithAPersonModal.style.display = "none";
-		    dispo5320Modal.style.display = "block";
+		var spokeWithAPersonPhysicalOrMentalImpairmentButton = document.getElementById('spokeWithAPersonPhysicalOrMentalImpairment');
+		spokeWithAPersonPhysicalOrMentalImpairmentButton.onclick = function() {
+		   spokeWithAPersonModal.style.display = "none";
+		   physicalOrMentalImpairmentModal.style.display = "block";
 		}
+		var physicalOrMentalImpairmentHardButton = document.getElementById('physicalOrMentalImpairmentHard');
+		physicalOrMentalImpairmentHardButton.onclick = function() {
+			physicalOrMentalImpairmentModal.style.display = "none";
+			dispo2320Modal.style.display = "block";
+		}
+
+		var physicalOrMentalImpairmentSoftButton = document.getElementById('physicalOrMentalImpairmentSoft');
+		physicalOrMentalImpairmentSoftButton.onclick = function() {
+			physicalOrMentalImpairmentModal.style.display = "none";
+			dispo5320Modal.style.display = "block";
+		}
+		var physicalOrMentalImpairmentModalbackButton = document.getElementById('physicalOrMentalImpairmentModalback');
+		physicalOrMentalImpairmentModalbackButton.onclick = function() {
+			physicalOrMentalImpairmentModal.style.display = "none";
+			modal.style.display = "block";
+		}
+
+		var dispo2320nextButton = document.getElementById('dispo2320next');
+		dispo2320nextButton.onclick = function() {
+	        window.open(get_embedded_data_url(2320));
+	    }
+		var dispo2320backButton = document.getElementById('dispo2320back');
+		dispo2320backButton.onclick = function() {
+			dispo2320Modal.style.display = "none";
+			physicalOrMentalImpairmentModal.style.display = "block";
+		}
+
 		var dispo5320nextButton = document.getElementById('dispo5320next');
 		dispo5320nextButton.onclick = function() {
 	        window.open(get_embedded_data_url(5320));
@@ -336,7 +814,7 @@ completeModalBackButton.onclick = function() {
 		var dispo5320backButton = document.getElementById('dispo5320back');
 		dispo5320backButton.onclick = function() {
 			dispo5320Modal.style.display = "none";
-			spokeWithAPersonModal.style.display = "block";
+			physicalOrMentalImpairmentModal.style.display = "block";
 		}
 
 		var spokeWithAPersonBusinessOnlyButton = document.getElementById('spokeWithAPersonBusinessOnly');
@@ -353,6 +831,7 @@ completeModalBackButton.onclick = function() {
 			dispo4500Modal.style.display = "none";
 			spokeWithAPersonModal.style.display = "block";
 		}
+
 		var spokeWithAPersonReachedDifferentNumberButton = document.getElementById('spokeWithAPersonReachedDifferentNumber');
 		spokeWithAPersonReachedDifferentNumberButton.onclick = function() {
 		    spokeWithAPersonModal.style.display = "none";
@@ -368,8 +847,23 @@ completeModalBackButton.onclick = function() {
 			spokeWithAPersonModal.style.display = "block";
 		}
 
-		var spokeWithAPersonNumberNotInPAButton = document.getElementById('spokeWithAPersonPhoneNumberNotInPa');
-		spokeWithAPersonNumberNotInPAButton.onclick = function() {
+		var spokeWithAPersonNotInPAButton = document.getElementById('spokeWithAPersonNotInPA');
+		spokeWithAPersonNotInPAButton.onclick = function() {
+			spokeWithAPersonModal.style.display = "none";
+			dispo4100Modal.style.display = "block";
+		}
+		var dispo4100nextButton = document.getElementById('dispo4100next');
+		dispo4100nextButton.onclick = function() {
+			window.open(get_embedded_data_url(4100));
+		}
+		var dispo4100backButton = document.getElementById('dispo4100back');
+		dispo4100backButton.onclick = function() {
+			dispo4100Modal.style.display = "none";
+			spokeWithAPersonModal.style.display = "block";
+		}
+
+		var spokeWithAPersonNumberDoesNotBelongToRespButton = document.getElementById('spokeWithAPersonNumberDoesNotBelongToResp');
+		spokeWithAPersonNumberDoesNotBelongToRespButton.onclick = function() {
 		    spokeWithAPersonModal.style.display = "none";
 		    dispo4700Modal.style.display = "block";
 		}
@@ -397,7 +891,6 @@ completeModalBackButton.onclick = function() {
 			dispo5121Modal.style.display = "none";
 			spokeWithAPersonModal.style.display = "block";
 		}
-
 		var spokeWithAPersonModalbackButton = document.getElementById('spokeWithAPersonModalback');
 		spokeWithAPersonModalbackButton.onclick = function() {
 		    spokeWithAPersonModal.style.display = "none";
@@ -778,7 +1271,6 @@ completeModalBackButton.onclick = function() {
 		modal.style.display = "block";
 	}
 }
-        //alert("there, I added it")  
     }
 });
 
