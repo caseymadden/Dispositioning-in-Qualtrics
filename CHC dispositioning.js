@@ -510,7 +510,7 @@ $('<div id="scheduledAnInPersonInterviewModal" class="modal"><div class="modal-c
 
 //Spoke with a person
 {
-	$('<div id="spokeWithAPersonModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>INTERVIEWER: You indicated that you spoke with a person before the interview was terminated. Please select the appropriate response below to indicate how the interview ended. </p><ul style="list-style:none;"><li><li><button id="spokeWithAPersonModalRefusal">*A refusal/hang up/termination</button></li><li><button id="spokeWithAPersonModalFinalRefusal">*Final refusal/hang up/termination</button></li><li><button id="spokeWithAPersonLanguageProblem">Language problem</button></li><li><button id="spokeWithAPersonPhysicalOrMentalImpairment">Physical or mental impairment</button></li><li><button id="spokeWithAPersonBusinessOnly">Business only</button></li><li><button id="spokeWithAPersonReachedDifferentNumber">Number reached different than number dialed</button></li><li><button id="spokeWithAPersonPhoneNumberNotInPa">Number does not belong to respondent</button></li><li><button id="spokeWithAPersonCallDropped">Call dropped</button></li><li><button id="spokeWithAPersonModalback">Back</button></li></ul></div></div>').appendTo("body");
+	$('<div id="spokeWithAPersonModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>INTERVIEWER: You indicated that you spoke with a person before the interview was terminated. Please select the appropriate response below to indicate how the interview ended. </p><ul style="list-style:none;"><li><li><button id="spokeWithAPersonModalRefusal">*A refusal/hang up/termination</button></li><li><button id="spokeWithAPersonModalFinalRefusal">*Final refusal/hang up/termination</button></li><li><button id="spokeWithAPersonLanguageProblem">Language problem</button></li><li><button id="spokeWithAPersonPhysicalOrMentalImpairment">Physical or mental impairment</button></li><li><button id="spokeWithAPersonBusinessOnly">Business only</button></li><li><button id="spokeWithAPersonReachedDifferentNumber">Number reached different than number dialed</button></li><li><button id="spokeWithAPersonNotInPA">Resident no longer lives in PA</button></li><li><button id="spokeWithAPersonNumberDoesNotBelongToResp">Number does not belong to respondent</button></li><li><button id="spokeWithAPersonCallDropped">Call dropped</button></li><li><button id="spokeWithAPersonModalback">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="physicalOrMentalImpairmentModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Soft or final?</p><ul style="list-style:none;"><li><button id="physicalOrMentalImpairmentSoft">Call again later</button></li><li><button id="physicalOrMentalImpairmentHard">Do not call again</button></li><li><button id="physicalOrMentalImpairmentModalback">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo2320Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 2320</p><p>Physical or mental impairment FINAL</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo2320next">Next</button></li><li><button id="dispo2320back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo5320Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5320</p><p>Physical or mental impairment SOFT</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo5320next">Next</button></li><li><button id="dispo5320back">Back</button></li></ul></div></div>').appendTo("body");
@@ -533,6 +533,7 @@ $('<div id="scheduledAnInPersonInterviewModal" class="modal"><div class="modal-c
 	$('<div id="dispo4300Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 4300</p><p>FINAL nonworking number</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo4300next">Next</button></li><li><button id="dispo4300back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo4700Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 4700</p><p>Number does not belong to respondent</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo4700next">Next</button></li><li><button id="dispo4700back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo5121Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5121</p><p>T. Call dropped</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo5121next">Next</button></li><li><button id="dispo5121back">Back</button></li></ul></div></div>').appendTo("body");
+	$('<div id="dispo4100Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 4100</p><p>T. Number not in PA</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo4100next">Next</button></li><li><button id="dispo4100back">Back</button></li></ul></div></div>').appendTo("body");
 }
 
 //Did not speak with a person
@@ -821,9 +822,24 @@ $('.close').click(function(){
 			dispo4300Modal.style.display = "none";
 			spokeWithAPersonModal.style.display = "block";
 		}
+		
+		var spokeWithAPersonNotInPAButton = document.getElementById('spokeWithAPersonNotInPA');
+		spokeWithAPersonNotInPAButton.onclick = function() {
+			spokeWithAPersonModal.style.display = "none";
+			dispo4100Modal.style.display = "block";
+		}
+		var dispo4100nextButton = document.getElementById('dispo4100next');
+		dispo4100nextButton.onclick = function() {
+			window.open(get_embedded_data_url(4100));
+		}
+		var dispo4100backButton = document.getElementById('dispo4100back');
+		dispo4100backButton.onclick = function() {
+			dispo4100Modal.style.display = "none";
+			spokeWithAPersonModal.style.display = "block";
+		}
 
-		var spokeWithAPersonNumberNotInPAButton = document.getElementById('spokeWithAPersonPhoneNumberNotInPa');
-		spokeWithAPersonNumberNotInPAButton.onclick = function() {
+		var spokeWithAPersonNumberDoesNotBelongToRespButton = document.getElementById('spokeWithAPersonNumberDoesNotBelongToResp');
+		spokeWithAPersonNumberDoesNotBelongToRespButton.onclick = function() {
 		    spokeWithAPersonModal.style.display = "none";
 		    dispo4700Modal.style.display = "block";
 		}
