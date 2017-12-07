@@ -1,7 +1,7 @@
 
 <script>
-//VERSION 3.0
-//Last updated 11/17/2017
+//VERSION 4.0
+//Last updated 12/7/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -52,6 +52,10 @@ function create_disp_history_JSON(IDISP_array) {
 
 	// Create JSON
 	var disp_history_obj = {
+		2110:0,
+		2111:0,
+		2112:0,
+		2117:0,
 		5050:0,
 		5100:0,
 		5105:0,
@@ -103,13 +107,14 @@ function run_logic_checks(dho, total_attempts) {
 	var eight_attempts = false;
 	var ten_attempts = false;
 
-	if(dho[5130] > 0 || dho[5140] > 0 || dho[5150] > 0 || dho[5220] > 0) {
+	if(dho[5130] > 0 || dho[5150] > 0 || dho[5220] > 0) {
 		max_attempts = 8;
 		six_attempts = false;
 		eight_attempts = true;
 	}
 	if(dho[5100] > 0 || dho[5050] > 0 || dho[5105] > 0 || dho[5107] > 0 || dho[5111] > 0 || dho[5112] > 0 || dho[5117] > 0 || dho[5120] > 0 || dho[5121] > 0 || dho[5320] > 0 || dho[5330] > 0 || dho[5560] > 0 || dho[9000] > 0 || dho[9100] > 0) {
 		max_attempts = 10;
+		six_attempts = false;
 		eight_attempts = false;
 		ten_attempts = true;
 	}
@@ -119,23 +124,27 @@ function run_logic_checks(dho, total_attempts) {
 
 	var wave = "${e://Field/Wave}"
 
-	// console.log("disp_history_obj: " + dho);
-	// console.log("total_attempts: " + total_attempts);
-	// console.log("max_attempts: " + max_attempts);
-	// console.log("wave: " + wave);
+	console.log("disp_history_obj: " + JSON.stringify(dho));
+	console.log("total_attempts: " + total_attempts);
+	console.log("max_attempts: " + max_attempts);
+	console.log("wave: " + wave);
 	var new_dispo;
 
 	{
 		function dispo_4200(dho) {
 			// At least one 5200 dispo
+			console.log("checking for dispo 4200");
 			if(dho[5200] > 0) {
+				console.log("returning true");
 				return true;
 			}
+			console.log("returning false");
 			return false;
 		}
 	
 		function dispo_4300(dho) {
 			// At least one 5300 dispo
+			console.log("checking for dispo 4300");
 			if(dho[5300] > 0) {
 				return true;
 			}
@@ -144,6 +153,7 @@ function run_logic_checks(dho, total_attempts) {
 	
 		function dispo_4400(dho) {
 			// At least one 5400 dispo
+			console.log("checking fro dispo 4400");
 			if(dho[5400] > 0) {
 				return true;
 			}
@@ -151,9 +161,19 @@ function run_logic_checks(dho, total_attempts) {
 		}
 	}
 
+	function dispo_3100(dho) {
+	// 3100 - Two refusals unknown whether sp (ex: pu/hu x2)
+		console.log("function dispo_3100 entered");
+		if(dho[5050] == 2) {
+			return true;
+		}
+		
+		return false;
+	}
+
 	function dispo_3130(dho) {
 	// 3130 - 8 attempts with plurality of attempts assigned 5130
-		// console.log("function dispo_3130 entered");
+		console.log("function dispo_3130 entered");
 		for(var key in dho) {
 			// console.log(dho[key] + " vs. " + dho[5130]);
 			if(key != 5130 && dho[key] >= dho[5130]) {
@@ -191,10 +211,10 @@ function run_logic_checks(dho, total_attempts) {
 	}
 
 	function dispo_2120(dho) {
-		// console.log("running dispo_2120");
+		console.log("running dispo_2120");
 		// 2120 - Two refusals OR FINAL REFUSAL after SP/Proxy has started survey, but before the partial complete point
 		if(wave > 0 && wave < 25) {
-			// console.log("wave > 0 and < 25");
+			console.log("wave > 0 and < 25");
 			if(dho[5112] > 0 && dho[5111] > 0) {
 				return true;
 			}
@@ -207,13 +227,29 @@ function run_logic_checks(dho, total_attempts) {
 			if(dho[5117] > 0 && dho[5050] > 0) {
 				return true;
 			}
+			if(dho[5050] == 2) {
+				return true;
+			}
 			if(dho[5112] == 2) {
 				return true;
 			}
 			if(dho[5117] == 2) {
 				return true;
 			}
+			if(dho[2110] == 1) {
+				return true;
+			}
+			if(dho[2111] == 1) {
+				return true;
+			}
+			if(dho[2112] == 1) {
+				return true;
+			}
+			if(dho[2117] == 1) {
+				return true;
+			}
 		}
+		console.log("returning false");
 		return false;
 	}
 
@@ -282,12 +318,17 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_2210_10_attempts(dho, wave) {
 		// 2210 - 10+ attempts with one 5100 and no refusals without SP initiating the survey
-		// console.log("running dispo_2210_10_attempts");
-		if(wave < 1 && dho[5100] > 0 && dho[5111] == 0 && dho[5112] == 0 && dho[5117] == 0 && dho[5050] == 0) {
-			// console.log("return true");
-			return true;
+		console.log("running dispo_2210_10_attempts");
+		if(wave < 1) {
+			console.log(wave < 1);
+			if( dho[5100] > 0) {
+				if( dho[5111] + dho[5112] + dho[5117] + dho[5050] == 0) {
+					console.log("return true");
+					return true;
+				}
+			}
 		}
-		// console.log("return false");
+		console.log("return false");
 		return false;
 	}
 
@@ -409,6 +450,10 @@ function run_logic_checks(dho, total_attempts) {
 	if(dispo_2111(dho)) {
 		// console.log("2111 true");
 		return 2111;
+	}
+	if(dispo_3100(dho)) {
+		console.log("3100 true");
+		return 3100;
 	}
 
 	// Run these checks if total_attempts = 20
