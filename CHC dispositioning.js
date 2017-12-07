@@ -215,37 +215,10 @@ function run_logic_checks(dho, total_attempts) {
 		// 2120 - Two refusals OR FINAL REFUSAL after SP/Proxy has started survey, but before the partial complete point
 		if(wave > 0 && wave < 25) {
 			console.log("wave > 0 and < 25");
-			if(dho[5112] > 0 && dho[5111] > 0) {
+			if(dho[5050] + dho[5111] + dho[5112] + dho[5117] > 1) {
 				return true;
 			}
-			if(dho[5117] > 0 && dho[5111] > 0) {
-				return true;
-			}
-			if(dho[5112] > 0 && dho[5050] > 0) {
-				return true;
-			}
-			if(dho[5117] > 0 && dho[5050] > 0) {
-				return true;
-			}
-			if(dho[5050] == 2) {
-				return true;
-			}
-			if(dho[5112] == 2) {
-				return true;
-			}
-			if(dho[5117] == 2) {
-				return true;
-			}
-			if(dho[2110] == 1) {
-				return true;
-			}
-			if(dho[2111] == 1) {
-				return true;
-			}
-			if(dho[2112] == 1) {
-				return true;
-			}
-			if(dho[2117] == 1) {
+			if(dho[2110] + dho[2111] + dho[2112] + dho[2117] > 0) {
 				return true;
 			}
 		}
@@ -329,6 +302,18 @@ function run_logic_checks(dho, total_attempts) {
 			}
 		}
 		console.log("return false");
+		return false;
+	}
+
+	function dispo_1200(dho, wave) {
+		if(wave > 25) {
+			if(dho[5050] + dho[5111] + dho[5112] + dho[5117] > 1) {
+				return true;
+			}
+			if(dho[2110] + dho[2111] + dho[2112] + dho[2117] > 0) {
+				return true;
+			}
+		}
 		return false;
 	}
 
