@@ -1,7 +1,7 @@
 
 <script>
 //VERSION 4.0
-//Last updated 12/7/2017
+//Last updated 12/8/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -213,8 +213,8 @@ function run_logic_checks(dho, total_attempts) {
 	function dispo_2120(dho) {
 		console.log("running dispo_2120");
 		// 2120 - Two refusals OR FINAL REFUSAL after SP/Proxy has started survey, but before the partial complete point
-		if(wave > 0 && wave < 25) {
-			console.log("wave > 0 and < 25");
+		if(wave > 0 && wave < 24) {
+			console.log("wave > 0 and < 24");
 			if(dho[5050] + dho[5111] + dho[5112] + dho[5117] > 1) {
 				return true;
 			}
@@ -306,26 +306,30 @@ function run_logic_checks(dho, total_attempts) {
 	}
 
 	function dispo_1200(dho, wave) {
-		if(wave > 25) {
+		console.log("check dispo_1200");
+		if(wave >= 24) {
 			if(dho[5050] + dho[5111] + dho[5112] + dho[5117] > 1) {
+				console.log("return true");
 				return true;
 			}
 			if(dho[2110] + dho[2111] + dho[2112] + dho[2117] > 0) {
+				console.log("return true");
 				return true;
 			}
 		}
+		console.log("returning false");
 		return false;
 	}
 
 	function dispo_1200_20_attempts(wave) {
-		if(wave > 25) {
+		if(wave >= 24) {
 			return true;
 		}
 		return false;
 	}
 
 	function dispo_2120_20_attempts(wave) {
-		if(wave > 0 && wave < 25) {
+		if(wave > 0 && wave < 24) {
 			return true;
 		}
 		return false;
@@ -419,7 +423,10 @@ function run_logic_checks(dho, total_attempts) {
 	}
 
 	// Run these checks on every dispo
-
+	
+	if(dispo_1200(dho, wave)) {
+		return 1200;
+	}
 	if(dispo_2120(dho)) {
 		// console.log("2120 true");
 		return 2120;
@@ -507,7 +514,7 @@ function get_embedded_data_url(dispo) {
 		url += "Dispo=" + dispo;
 	}
 	url = url.replaceAll(' ', '_');
-	alert('Alert box to pause');
+	// alert('Alert box to pause');
 	return url;
 }
 
