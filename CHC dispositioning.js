@@ -494,7 +494,12 @@ function loadJs(src, callback) {
 
 loadJs('https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js', function() {
     var element =  document.getElementById('myModal');
-}
+
+    if (typeof(element) != 'undefined' && element != null)
+    {
+        //alert("it already exists")
+    } else
+{
 
 //Root menu
 $('<div id="myModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>INTERVIEWER: You are now ready to answer questions to assign a disposition code. If you continue past this screen, you will select the outcome of this call attempt.</p><ul style="list-style:none;"><li><button id="complete">***COMPLETE***</button></li><li><button id="supervisorAttention">Supervisor attention*</button></li><li><button id="scheduleAnAppointmentForCallback">Schedule an appointment for callback</button></li><li><button id="scheduledAnInPersonInterview">Scheduled an in-person interview</button></li><li><button id="spokeWithAPerson">Spoke with a person</button></li><li><button id="didNotSpeakWithAPerson">Did not speak with a person</button></li><li><button id="selectedPersonTransferedToANursingHome">Selected person transfered to a nursing home</button></li><li><button id="selectedPersonDead">Selected person dead</button></li></ul></div></div>').appendTo("body");
