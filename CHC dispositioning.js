@@ -1,6 +1,6 @@
 
 <script>
-//VERSION 4.0
+//VERSION 4.1
 //Last updated 12/8/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
@@ -122,7 +122,7 @@ function run_logic_checks(dho, total_attempts) {
 	max_attempts += dho[5105];
 	max_attempts += dho[5107];
 
-	var wave = "${e://Field/Wave}"
+	var wave = "${e://Field/Wave}";
 
 	console.log("disp_history_obj: " + JSON.stringify(dho));
 	console.log("total_attempts: " + total_attempts);
@@ -162,19 +162,16 @@ function run_logic_checks(dho, total_attempts) {
 		if(dho[5050] == 2) {
 			return true;
 		}
-		
 		return false;
 	}
 
 	function dispo_3130(dho) {
 	// 3130 - 8 attempts with plurality of attempts assigned 5130
-		console.log("function dispo_3130 entered");
 		for(var key in dho) {
 			if(key != 5130 && dho[key] >= dho[5130]) {
 				return false;
 			}
 		}
-		console.log("returning true");
 		return true;
 	}
 
@@ -199,7 +196,6 @@ function run_logic_checks(dho, total_attempts) {
 	}
 
 	function dispo_2120(dho) {
-		console.log("running dispo_2120");
 		// 2120 - Two refusals OR FINAL REFUSAL after SP/Proxy has started survey, but before the partial complete point
 		if(wave > 0 && wave < 24) {
 			console.log("wave > 0 and < 24");
@@ -210,7 +206,6 @@ function run_logic_checks(dho, total_attempts) {
 				return true;
 			}
 		}
-		console.log("returning false");
 		return false;
 	}
 
@@ -278,32 +273,25 @@ function run_logic_checks(dho, total_attempts) {
 		// 2210 - 10+ attempts with one 5100 and no refusals without SP initiating the survey
 		console.log("running dispo_2210_10_attempts");
 		if(wave < 1) {
-			console.log(wave < 1);
 			if( dho[5100] > 0) {
 				if( dho[5111] + dho[5112] + dho[5117] + dho[5050] == 0) {
-					console.log("return true");
 					return true;
 				}
 			}
 		}
-		console.log("return false");
 		return false;
 	}
 
 	function dispo_1200(dho, wave) {
 	// 1200 - Wave >= 24 and survey ended
-		console.log("check dispo_1200");
 		if(wave >= 24) {
 			if(dho[5050] + dho[5111] + dho[5112] + dho[5117] > 1) {
-				console.log("return true");
 				return true;
 			}
 			if(dho[2110] + dho[2111] + dho[2112] + dho[2117] > 0) {
-				console.log("return true");
 				return true;
 			}
 		}
-		console.log("returning false");
 		return false;
 	}
 
@@ -506,11 +494,7 @@ function loadJs(src, callback) {
 
 loadJs('https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js', function() {
     var element =  document.getElementById('myModal');
-
-    if (typeof(element) != 'undefined' && element != null)
-    {
-        //alert("it already exists")
-    }
+}
 
 //Root menu
 $('<div id="myModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>INTERVIEWER: You are now ready to answer questions to assign a disposition code. If you continue past this screen, you will select the outcome of this call attempt.</p><ul style="list-style:none;"><li><button id="complete">***COMPLETE***</button></li><li><button id="supervisorAttention">Supervisor attention*</button></li><li><button id="scheduleAnAppointmentForCallback">Schedule an appointment for callback</button></li><li><button id="scheduledAnInPersonInterview">Scheduled an in-person interview</button></li><li><button id="spokeWithAPerson">Spoke with a person</button></li><li><button id="didNotSpeakWithAPerson">Did not speak with a person</button></li><li><button id="selectedPersonTransferedToANursingHome">Selected person transfered to a nursing home</button></li><li><button id="selectedPersonDead">Selected person dead</button></li></ul></div></div>').appendTo("body");
