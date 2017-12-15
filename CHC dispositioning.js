@@ -1,7 +1,7 @@
 
 <script>
-//VERSION 4.1
-//Last updated 12/8/2017
+//VERSION 4.2
+//Last updated 12/15/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -309,6 +309,14 @@ function run_logic_checks(dho, total_attempts) {
 		return false;
 	}
 
+	function dispo_2320(dho) {
+		//2320 - Physical or mental impairment
+		if(dho[5320] == 2 || dho[2320] == 1) {
+			return true;
+		}
+		return false;
+	}
+
 	// Run checks on 6 attempts IF max_attempts = 6
 	if(six_attempts && total_attempts == 6) {
 		if(dispo_4200(dho)) {
@@ -407,6 +415,9 @@ function run_logic_checks(dho, total_attempts) {
 	if(dispo_3100(dho)) {
 		console.log("3100 true");
 		return 3100;
+	}
+	if(dispo_2320(dho)) {
+		return 2320;
 	}
 
 	// Run these checks if total_attempts = 20
@@ -545,7 +556,7 @@ $('<div id="scheduledAnInPersonInterviewModal" class="modal"><div class="modal-c
 	$('<div id="dispo2110Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 2110</p><p>T. Refusal - refusal, unknown who refused</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo2110next">Next</button></li><li><button id="dispo2110back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo5300Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5300</p><p>T. Possible nonworking number</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo5300next">Next</button></li><li><button id="dispo5300back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="hardRefusalModal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Did the Selected Person refuse?</p><ul style="list-style:none;"><li><button id="hardRefuseYes">Yes</button></li><li><button id="hardRefuseNo">No</button></li><li><button id="hardRefuseDontKnow">Dont know</button></li><li><button id="hardRefusalModalback">Back</button></li></ul></div></div>').appendTo("body");
-	$('<div id="dispo5320Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5320</p><p>T. Physical/Mental impairment</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo5320next">Next</button></li><li><button id="dispo5320back">Back</button></li></ul></div></div>').appendTo("body");
+	// $('<div id="dispo5320Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 5320</p><p>T. Physical/Mental impairment</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo5320next">Next</button></li><li><button id="dispo5320back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo4500Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 4500</p><p>Business only</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo4500next">Next</button></li><li><button id="dispo4500back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo4300Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 4300</p><p>FINAL nonworking number</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo4300next">Next</button></li><li><button id="dispo4300back">Back</button></li></ul></div></div>').appendTo("body");
 	$('<div id="dispo4700Modal" class="modal"><div class="modal-content"><span class="close">&times;</span><br><br><p>Disposition code = 4700</p><p>Number does not belong to respondent</p><p>HIT "NEXT" TO ASSIGN THIS DISPOSITION CODE</p><ul style="list-style:none;"><li><button id="dispo4700next">Next</button></li><li><button id="dispo4700back">Back</button></li></ul></div></div>').appendTo("body");
