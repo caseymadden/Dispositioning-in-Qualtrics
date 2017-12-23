@@ -1,7 +1,6 @@
-
 <script>
-//VERSION 4.2
-//Last updated 12/15/2017
+//VERSION 4.3
+//Last updated 12/23/2017
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -318,7 +317,7 @@ function run_logic_checks(dho, total_attempts) {
 	}
 
 	// Run checks on 6 attempts IF max_attempts = 6
-	if(six_attempts && total_attempts == 6) {
+	if(six_attempts && total_attempts == 6 && dho[5100] + dho[5107] + dho[5105] == 0) {
 		if(dispo_4200(dho)) {
 			return 4200;
 		}
@@ -482,7 +481,7 @@ function get_embedded_data_url(dispo) {
 		url += "Dispo=" + dispo;
 	}
 	url = url.replaceAll(' ', '_');
-	// alert('Alert box to pause');
+	//alert('If you see this Casey forgot to turn off the alert box. It wont affect anything. Just hit ok and tell him to turn it off when you see him.');
 	return url;
 }
 
