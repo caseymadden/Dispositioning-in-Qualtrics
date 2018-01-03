@@ -284,10 +284,23 @@ function run_logic_checks(dho, total_attempts) {
 	function dispo_1200(dho, wave) {
 	// 1200 - Wave >= 24 and survey ended
 		if(wave >= 24) {
-			if(dho[5050] + dho[5111] + dho[5112] + dho[5117] > 1) {
+			if(dho[5050] + dho[5111] + dho[5112] > 1) {
 				return true;
 			}
-			if(dho[2110] + dho[2111] + dho[2112] + dho[2117] > 0) {
+			if(dho[2110] + dho[2111] + dho[2112] > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function dispo_1207(dho, wave) {
+	// 1207 - Wave >= 24 and survey terminated
+		if(wave >= 24) {
+			if(dho[5117] > 1) {
+				return true;
+			}
+			if(dho[2117] > 0) {
 				return true;
 			}
 		}
@@ -396,6 +409,9 @@ function run_logic_checks(dho, total_attempts) {
 
 	// Run these checks on every dispo
 	
+	if(dispo_1207(dho, wave)) {
+		return 1207;
+	}
 	if(dispo_1200(dho, wave)) {
 		return 1200;
 	}
