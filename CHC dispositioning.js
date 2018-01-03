@@ -314,6 +314,15 @@ function run_logic_checks(dho, total_attempts) {
 		return false;
 	}
 
+	function dispo_1207_20_attempts(wave, dho) {
+		if(wave >= 24) {
+			if(dho[5107] + dho[5117] > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	function dispo_2120_20_attempts(wave) {
 		if(wave > 0 && wave < 24) {
 			return true;
@@ -439,6 +448,8 @@ function run_logic_checks(dho, total_attempts) {
 	if(total_attempts == 20) {
 		if(dispo_1200_20_attempts(wave)) {
 				return 1200;
+			} else if(dispo_1207_20_attempts(wave, dho)) {
+				return 1207;
 			} else if(dispo_2120_20_attempts(wave)) {
 				return 2120;
 			} else {
