@@ -1,6 +1,6 @@
 <script>
-//VERSION 4.3
-//Last updated 12/23/2017
+//VERSION 4.4
+//Last updated 1/3/2018 - New Years Edition
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
