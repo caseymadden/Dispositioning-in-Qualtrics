@@ -1,5 +1,5 @@
 <script>
-//VERSION 4.6
+//VERSION 4.7
 //Last updated 1/16/2018
 var DEBUG_MODE = true;
 
@@ -108,12 +108,33 @@ function run_logic_checks(dho, total_attempts) {
 	var eight_attempts = false;
 	var ten_attempts = false;
 
-	if(dho[5130] + dho[5150] + dho[5220] > 0) {
+	if(DEBUG_MODE) {
+		console.log("dho[5130]: " + dho[5130]);
+		console.log("dho[5140]: " + dho[5140]);
+		console.log("dho[5150]: " + dho[5150]);
+	}
+	if(dho[5130] + dho[5140] + dho[5150] > 0) {
+		if(DEBUG_MODE) {
+			console.log("max_attempts being increased to 8");
+		}
 		max_attempts = 8;
 		six_attempts = false;
 		eight_attempts = true;
 	}
-	if(dho[5100] + dho[5050] + dho[5105] + dho[5107] + dho[5111] + dho[5112] + dho[5117] + dho[5120] + dho[5121] + dho[5320] + dho[5330] + dho[5560] + dho[9000] + dho[9100] > 0) {
+	if(DEBUG_MODE) {
+		console.log("dho[5100]: " + dho[5100]);
+		console.log("dho[5050]: " + dho[5105]);
+		console.log("dho[5107]: " + dho[5107]);
+		console.log("dho[5111]: " + dho[5111]);
+		console.log("dho[5112]: " + dho[5112]);
+		console.log("dho[5117]: " + dho[5117]);
+		console.log("dho[5121]: " + dho[5121]);
+		console.log("dho[5320]: " + dho[5320]);
+		console.log("dho[5330]: " + dho[5330]);
+		console.log("dho[5560]: " + dho[5560]);
+		console.log("dho[9100]: " + dho[9100]);
+	}
+	if(dho[5100] + dho[5050] + dho[5105] + dho[5107] + dho[5111] + dho[5112] + dho[5117] + dho[5121] + dho[5320] + dho[5330] + dho[5560] + dho[9100] > 0) {
 		max_attempts = 10;
 		six_attempts = false;
 		eight_attempts = false;
@@ -126,6 +147,9 @@ function run_logic_checks(dho, total_attempts) {
 	var wave = "${e://Field/Wave}";
 
 	if(DEBUG_MODE) {
+		console.log("six_attempts: " + six_attempts);
+		console.log("eight_attempts: " + eight_attempts);
+		console.log("ten_attempts: " + ten_attempts);
 		console.log("disp_history_obj: " + JSON.stringify(dho));
 		console.log("total_attempts: " + total_attempts);
 		console.log("max_attempts: " + max_attempts);
