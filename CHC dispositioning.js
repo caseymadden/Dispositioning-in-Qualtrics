@@ -1,6 +1,6 @@
 <script>
-//VERSION 4.7
-//Last updated 1/16/2018
+//VERSION 4.9
+//Last updated 1/29/2018
 var DEBUG_MODE = true;
 
 String.prototype.replaceAll = function (find, replace) {
@@ -384,6 +384,14 @@ function run_logic_checks(dho, total_attempts) {
 		return false;
 	}
 
+	function dispo_3330(dho) {
+		//5330 - Language barrier x2
+		if(dho[5330] > 1) {
+			return true;
+		}
+		return false;
+	}
+
 	// Run checks on 6 attempts IF max_attempts = 6
 	if(six_attempts && total_attempts == 6 && dho[5100] + dho[5107] + dho[5105] == 0) {
 		if(dispo_4200(dho)) {
@@ -556,6 +564,12 @@ function run_logic_checks(dho, total_attempts) {
 				console.log("Returning 2320");
 			}
 		return 2320;
+	}
+	if(dispo_3330(dho)) {
+		if(DEBUG_MODE) {
+			console.log("Returning 3330");
+		}
+		return 3330;
 	}
 
 	// Run these checks if total_attempts = 20
