@@ -1,6 +1,6 @@
 <script>
-//VERSION 4.9
-//Last updated 1/29/2018
+//VERSION 5.1
+//Last updated 2/8/2018
 var DEBUG_MODE = true;
 
 String.prototype.replaceAll = function (find, replace) {
@@ -150,7 +150,6 @@ function run_logic_checks(dho, total_attempts) {
 		console.log("six_attempts: " + six_attempts);
 		console.log("eight_attempts: " + eight_attempts);
 		console.log("ten_attempts: " + ten_attempts);
-		console.log("disp_history_obj: " + JSON.stringify(dho));
 		console.log("total_attempts: " + total_attempts);
 		console.log("max_attempts: " + max_attempts);
 		console.log("wave: " + wave);
@@ -207,7 +206,7 @@ function run_logic_checks(dho, total_attempts) {
 	function dispo_3130(dho) {
 	// 3130 - 8 attempts with plurality of attempts assigned 5130
 		for(var key in dho) {
-			if(key != 5130 && dho[key] >= dho[5130]) {
+			if(key != 5130 && key != 5200 && dho[key] >= dho[5130]) {
 				return false;
 			}
 		}
@@ -217,7 +216,7 @@ function run_logic_checks(dho, total_attempts) {
 	function dispo_3140(dho) {
 	// 3140 - 8 attempts with plurality of attempts assigned 5140
 		for(var key in dho) {
-			if(key != 5140 && dho[key] >= dho[5140]) {
+			if(key != 5140 && key != 5200 && dho[key] >= dho[5140]) {
 				return false;
 			}
 		}
@@ -225,9 +224,9 @@ function run_logic_checks(dho, total_attempts) {
 	}
 
 	function dispo_3150(dho) {
-	// 3150 - 8 attempts with plurality of attempts assigned 5140
+	// 3150 - 8 attempts with plurality of attempts assigned 5150
 		for(var key in dho) {
-			if(key != 5150 && dho[key] >= dho[5150]) {
+			if(key != 5150 && key != 5200 && dho[key] >= dho[5150] && key) {
 				return false;
 			}
 		}
@@ -393,7 +392,7 @@ function run_logic_checks(dho, total_attempts) {
 	}
 
 	// Run checks on 6 attempts IF max_attempts = 6
-	if(six_attempts && total_attempts == 6 && dho[5100] + dho[5107] + dho[5105] == 0) {
+	if(six_attempts && total_attempts == 6 && dho[5100] + dho[5107] + dho[5105] + dho[5140] == 0) {
 		if(dispo_4200(dho)) {
 			if(DEBUG_MODE) {
 				console.log("Returning 4200");
@@ -459,6 +458,8 @@ function run_logic_checks(dho, total_attempts) {
 				return 3140;
 			}
 		}
+
+
 
 		if(dispo_3150(dho)) {
 			if(DEBUG_MODE) {
@@ -591,10 +592,27 @@ function get_embedded_data_url(dispo) {
 	var IDISP_array = get_IDISP_array(dispo);
 	var new_dispo = create_disp_history_JSON(IDISP_array);
 
+	var finalDisp = null;
+
 	var intVStatus = 3;
 	if(dispo < 5000) {
 		intVStatus = 4;
 	}
+
+	if(intVStatus == 4) {
+		if(new_dispo) {
+			finalDisp = new_dispo;
+		} else {
+			finalDisp = dispo;
+		}
+		Qualtrics.SurveyEngine.setEmbeddedData('finalDisp', finalDisp);
+	}
+	
+	if(DEBUG_MODE) {
+		console.log("finalDisp: " + finalDisp);
+		console.log("finalDisp_embeddedData: ${e://Field/finalDisp}")
+	}
+
 	var url = "http://130.49.206.205:8090/ReturnToWincati/";
 	url += "PassCode=${e://Field/PassCode}/";
 	url += "PCA=${e://Field/PCA}/";
@@ -628,6 +646,7 @@ function get_embedded_data_url(dispo) {
 	url += "IDISP18=" + IDISP_array[18] + "/";
 	url += "IDISP19=" + IDISP_array[19] + "/";
 	url += "IDISP20=" + IDISP_array[20] + "/";
+	url += "finalDisp=" + finalDisp + "/";
 	url += "Wave=${e://Field/Wave}/";	
 	url += "IntVStatus=" + intVStatus + "/";
 	if(new_dispo) {
@@ -637,6 +656,7 @@ function get_embedded_data_url(dispo) {
 	}
 	url = url.replaceAll(' ', '_');
 	if(DEBUG_MODE) {
+		console.log(url);
 		alert('If you see this Casey forgot to turn off the alert box. It wont affect anything. Just hit ok and tell him to turn it off when you see him.');
 	}
 	return url;
