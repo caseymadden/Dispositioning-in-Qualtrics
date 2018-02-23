@@ -1,6 +1,6 @@
 <script>
 //VERSION 5.1
-//Last updated 2/8/2018
+//Last updated 2/20/2018
 var DEBUG_MODE = true;
 
 String.prototype.replaceAll = function (find, replace) {
@@ -605,12 +605,14 @@ function get_embedded_data_url(dispo) {
 		} else {
 			finalDisp = dispo;
 		}
+		console.log(Qualtrics.SurveyEngine.QuestionInfo);
 		Qualtrics.SurveyEngine.setEmbeddedData('finalDisp', finalDisp);
 	}
 	
 	if(DEBUG_MODE) {
 		console.log("finalDisp: " + finalDisp);
-		console.log("finalDisp_embeddedData: ${e://Field/finalDisp}")
+		console.log("finalDisp_embeddedData: ${e://Field/finalDisp}");
+		console.log("contractor: ${e://Field/Contractor}");
 	}
 
 	var url = "http://130.49.206.205:8090/ReturnToWincati/";
@@ -621,6 +623,7 @@ function get_embedded_data_url(dispo) {
 	url += "VALFU=${e://Field/VALFU}/";
 	url += "LEFTMSG=${e://Field/LEFTMSG}/";
 	url += "KEYDISP=${e://Field/KEYDISP}/";
+	url += "CONTRACTOR=${e://Field/Contractor}/";
 	url += "NSOC=${e://Field/NSOC}/";
 	url += "NSOCname=${e://Field/NSOCname}/";
 	url += "NSOCphone=${e://Field/NSOCphone}/";
