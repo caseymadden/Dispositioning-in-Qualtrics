@@ -1,8 +1,13 @@
 <script>
+<<<<<<< HEAD
 //VERSION 5.1
 //Last updated 2/20/2018
 var DEBUG_MODE = true;
 
+=======
+//VERSION 4.4
+//Last updated 1/3/2018 - New Years Edition
+>>>>>>> parent of 5ae1cfa... Added a debug mode
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -146,6 +151,7 @@ function run_logic_checks(dho, total_attempts) {
 
 	var wave = "${e://Field/Wave}";
 
+<<<<<<< HEAD
 	if(DEBUG_MODE) {
 		console.log("six_attempts: " + six_attempts);
 		console.log("eight_attempts: " + eight_attempts);
@@ -155,6 +161,12 @@ function run_logic_checks(dho, total_attempts) {
 		console.log("wave: " + wave);
 	}
 	
+=======
+	console.log("disp_history_obj: " + JSON.stringify(dho));
+	console.log("total_attempts: " + total_attempts);
+	console.log("max_attempts: " + max_attempts);
+	console.log("wave: " + wave);
+>>>>>>> parent of 5ae1cfa... Added a debug mode
 	var new_dispo;
 
 	{
@@ -185,19 +197,8 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_3100(dho) {
 	// 3100 - Two refusals unknown whether sp (ex: pu/hu x2)
-		if(DEBUG_MODE) {
-			console.log("function dispo_3100 entered");
-		}
-		
+		console.log("function dispo_3100 entered");
 		if(dho[5050] == 2) {
-			return true;
-		}
-		return false;
-	}
-
-	function dispo_3100_10_attempt(dho) {
-	// 3100 - > 9 attempts and 1x 5050
-		if(dho[5050] > 0) {
 			return true;
 		}
 		return false;
@@ -236,10 +237,7 @@ function run_logic_checks(dho, total_attempts) {
 	function dispo_2120(dho) {
 		// 2120 - Two refusals OR FINAL REFUSAL after SP/Proxy has started survey, but before the partial complete point
 		if(wave > 0 && wave < 24) {
-			if(DEBUG_MODE) {
-				console.log("wave > 0 and < 24");
-			}
-			
+			console.log("wave > 0 and < 24");
 			if(dho[5050] + dho[5111] + dho[5112] + dho[5117] > 1) {
 				return true;
 			}
@@ -312,10 +310,7 @@ function run_logic_checks(dho, total_attempts) {
 
 	function dispo_2210_10_attempts(dho, wave) {
 		// 2210 - 10+ attempts with one 5100 and no refusals without SP initiating the survey
-		if(DEBUG_MODE) {
-			console.log("running dispo_2210_10_attempts");
-		}
-
+		console.log("running dispo_2210_10_attempts");
 		if(wave < 1) {
 			if( dho[5100] > 0) {
 				if( dho[5111] + dho[5112] + dho[5117] + dho[5050] == 0) {
@@ -394,21 +389,12 @@ function run_logic_checks(dho, total_attempts) {
 	// Run checks on 6 attempts IF max_attempts = 6
 	if(six_attempts && total_attempts == 6 && dho[5100] + dho[5107] + dho[5105] + dho[5140] == 0) {
 		if(dispo_4200(dho)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 4200");
-			}
 			return 4200;
 		}
 		if(dispo_4400(dho)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 4400");
-			}
 			return 4400;
 		}
 		if(dispo_4300(dho)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 4300");
-			}
 			return 4300;
 		}
 	}
@@ -424,9 +410,6 @@ function run_logic_checks(dho, total_attempts) {
 				}
 			}
 			if (plurality) {
-				if(DEBUG_MODE) {
-					console.log("Returning 3150");
-				}
 				return 3150;
 			}
 		}
@@ -438,9 +421,6 @@ function run_logic_checks(dho, total_attempts) {
 				}
 			}
 			if (plurality) {
-				if(DEBUG_MODE) {
-					console.log("Returning 3150");
-				}
 				return 3150;
 			}
 		}
@@ -452,9 +432,6 @@ function run_logic_checks(dho, total_attempts) {
 				}
 			}
 			if (plurality) {
-				if(DEBUG_MODE) {
-					console.log("Returning 3140");
-				}
 				return 3140;
 			}
 		}
@@ -462,21 +439,12 @@ function run_logic_checks(dho, total_attempts) {
 
 
 		if(dispo_3150(dho)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 3150");
-			}
 			return 3150;
 		}
 		if(dispo_3140(dho)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 3140");
-			}
 			return 3140;
 		}
 		if(dispo_3130(dho)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 3130");
-			}
 			return 3130;
 		}
 	}
@@ -485,85 +453,44 @@ function run_logic_checks(dho, total_attempts) {
 
 	if(ten_attempts && total_attempts > 9) {
 		if(dispo_2112_10_attempts(dho)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 2112");
-			}
 			return 2112;
 		}
 		if(dispo_2117_10_attempts(dho)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 2117");
-			}
 			return 2117;
 		}
 		if(dispo_2111_10_attempts(dho)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 2111");
-			}
 			return 2111;
 		}
 		if(dispo_2210_10_attempts(dho, wave)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 2210");
-			}
 			return 2210;
-		}
-		if(dispo_3100_10_attempt(dho)) {
-			if(DEBUG_MODE) {
-				console.log("Returning 3100");
-			}
-			return 3100;
 		}
 	}
 
 	// Run these checks on every dispo
 	
 	if(dispo_1207(dho, wave)) {
-		if(DEBUG_MODE) {
-				console.log("Returning 1207");
-			}
 		return 1207;
 	}
 	if(dispo_1200(dho, wave)) {
-		if(DEBUG_MODE) {
-				console.log("Returning 1200");
-			}
 		return 1200;
 	}
 	if(dispo_2120(dho)) {
-		if(DEBUG_MODE) {
-				console.log("Returning 2120");
-			}
 		return 2120;
 	}
 	if(dispo_2112(dho)) {
-		if(DEBUG_MODE) {
-				console.log("Returning 2112");
-			}
 		return 2112;
 	}
 	if(dispo_2117(dho)) {
-		if(DEBUG_MODE) {
-				console.log("Returning 2117");
-			}
 		return 2117;
 	}
 	if(dispo_2111(dho)) {
-		if(DEBUG_MODE) {
-				console.log("Returning 2111");
-			}
 		return 2111;
 	}
 	if(dispo_3100(dho)) {
-		if(DEBUG_MODE) {
-				console.log("Returning 3100");
-			}
+		console.log("3100 true");
 		return 3100;
 	}
 	if(dispo_2320(dho)) {
-		if(DEBUG_MODE) {
-				console.log("Returning 2320");
-			}
 		return 2320;
 	}
 	if(dispo_3330(dho)) {
@@ -658,10 +585,14 @@ function get_embedded_data_url(dispo) {
 		url += "Dispo=" + dispo;
 	}
 	url = url.replaceAll(' ', '_');
+<<<<<<< HEAD
 	if(DEBUG_MODE) {
 		console.log(url);
 		alert('If you see this Casey forgot to turn off the alert box. It wont affect anything. Just hit ok and tell him to turn it off when you see him.');
 	}
+=======
+	//alert('If you see this Casey forgot to turn off the alert box. It wont affect anything. Just hit ok and tell him to turn it off when you see him.');
+>>>>>>> parent of 5ae1cfa... Added a debug mode
 	return url;
 }
 
