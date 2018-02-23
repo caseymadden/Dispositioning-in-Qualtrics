@@ -1,13 +1,9 @@
 <script>
-<<<<<<< HEAD
-//VERSION 5.1
-//Last updated 2/20/2018
+//VERSION 6.0 ---> ROLLBACK
+//Last updated 2/23/2018
 var DEBUG_MODE = true;
 
-=======
-//VERSION 4.4
-//Last updated 1/3/2018 - New Years Edition
->>>>>>> parent of 5ae1cfa... Added a debug mode
+
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
     return str.replace(new RegExp(find, 'g'), replace);
@@ -151,22 +147,15 @@ function run_logic_checks(dho, total_attempts) {
 
 	var wave = "${e://Field/Wave}";
 
-<<<<<<< HEAD
 	if(DEBUG_MODE) {
 		console.log("six_attempts: " + six_attempts);
 		console.log("eight_attempts: " + eight_attempts);
 		console.log("ten_attempts: " + ten_attempts);
 		console.log("total_attempts: " + total_attempts);
 		console.log("max_attempts: " + max_attempts);
+		console.log("disp_history_obj: " + JSON.stringify(dho));
 		console.log("wave: " + wave);
-	}
-	
-=======
-	console.log("disp_history_obj: " + JSON.stringify(dho));
-	console.log("total_attempts: " + total_attempts);
-	console.log("max_attempts: " + max_attempts);
-	console.log("wave: " + wave);
->>>>>>> parent of 5ae1cfa... Added a debug mode
+	}	
 	var new_dispo;
 
 	{
@@ -585,14 +574,10 @@ function get_embedded_data_url(dispo) {
 		url += "Dispo=" + dispo;
 	}
 	url = url.replaceAll(' ', '_');
-<<<<<<< HEAD
 	if(DEBUG_MODE) {
 		console.log(url);
 		alert('If you see this Casey forgot to turn off the alert box. It wont affect anything. Just hit ok and tell him to turn it off when you see him.');
 	}
-=======
-	//alert('If you see this Casey forgot to turn off the alert box. It wont affect anything. Just hit ok and tell him to turn it off when you see him.');
->>>>>>> parent of 5ae1cfa... Added a debug mode
 	return url;
 }
 
